@@ -51,4 +51,36 @@ public class Tests {
 
         Assert.That(result, Is.EqualTo(new BooleanExpression(false)));
     }
+
+
+    [Test]
+    public void CheckSimplfingConjunctionWorks() {
+
+        MathExpression expression = new ConjunctionExpression(
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("c"), new TypeExpression(MathType.Boolean)),
+            new ConjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("b")
+            ),
+             new DisjunctionExpression(
+                 new VariableExpression("a"),
+                 new VariableExpression("c")
+             )
+        );
+
+        MathExpression expected = new ConjunctionExpression(
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("c"), new TypeExpression(MathType.Boolean)),
+            new VariableExpression("a"),
+            new VariableExpression("b")
+        );
+
+        MathExpression result = expression.Simplify();
+
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
 }
