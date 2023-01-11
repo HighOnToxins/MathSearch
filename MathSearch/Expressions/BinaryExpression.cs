@@ -2,7 +2,7 @@
 
 namespace MathSearch.Expressions;
 
-public abstract class BinaryExpression : GroupExpression{
+public abstract class BinaryExpression : OperatorExpression{
 
     private static T GetLeftChild<T>(IEnumerable<T> children) => children.First();
     private static T GetRightChild<T>(IEnumerable<T> children) => children.ElementAt(1);
@@ -24,7 +24,7 @@ public abstract class BinaryExpression : GroupExpression{
         SetRightChild(children, rightChild);
     }
 
-    protected override bool Condition(IEnumerable<MathExpression> children, Context context) =>
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) =>
         Condition(GetLeftChild(children), GetRightChild(children), context);
 
     protected abstract bool Condition(MathExpression leftChild, MathExpression rightChild, Context context);

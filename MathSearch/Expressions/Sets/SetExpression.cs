@@ -2,7 +2,7 @@
 
 namespace MathSearch.Expressions.Sets;
 
-public sealed class SetExpression: GroupExpression {
+public sealed class SetExpression: OperatorExpression {
 
     public override HashSet<MathExpression> Children { get; }
 
@@ -20,7 +20,7 @@ public sealed class SetExpression: GroupExpression {
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
         new SetExpression(Children);
 
-    protected override bool Condition(IEnumerable<MathExpression> children, Context context) {
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) {
         return false;
     }
 

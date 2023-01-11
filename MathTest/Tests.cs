@@ -5,7 +5,7 @@ using MathSearch.Expressions.Sets;
 
 namespace MathTest;
 
-public class Tests2 {
+public class Tests {
 
     [Test]
     public void TypeOfConjunctionIsBoolean() {
@@ -80,5 +80,32 @@ public class Tests2 {
 
 
         Assert.That(result, Is.EqualTo(expected));
+    }
+
+
+    [Test]
+    public void CheckSimplifyableConjunction() {
+        MathSystem system = new(
+            new DisjunctionExpression(
+                new ConjunctionExpression(
+                    new VariableExpression("a"),
+                    new VariableExpression("b")
+                ),
+                new VariableExpression("a"),
+                new ConjunctionExpression(
+                    new BooleanExpression(false),
+                    new BooleanExpression(true)
+                ),
+                new BooleanExpression(false)
+            ),
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean))
+        );
+
+        MathExpression expected = new VariableExpression("a");
+
+        MathSystem result = (MathSystem) system.Simplify();
+
+        Assert.That(result.Children.ElementAt(0), Is.EqualTo(expected));
     }
 }

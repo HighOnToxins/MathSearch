@@ -4,17 +4,17 @@ using MathSearch.Expressions.Basics;
 
 namespace MathSearch.Expressions;
 
-public abstract class GroupExpression : MathExpression {
+public abstract class OperatorExpression : MathExpression {
 
     public virtual IReadOnlyCollection<MathExpression> Children { get;}
 
     public override int ChildCount => Children.Count;
 
-    public GroupExpression(IReadOnlyCollection<MathExpression> children) {
+    public OperatorExpression(IReadOnlyCollection<MathExpression> children) {
         Children = children;
     }
 
-    public GroupExpression() {
+    public OperatorExpression() {
         Children = Array.Empty<MathExpression>();
     }
 
@@ -29,7 +29,7 @@ public abstract class GroupExpression : MathExpression {
 
         IEnumerable<MathExpression> children = Children;
 
-        if(Condition(Children, context)) {
+        if(ConditionIsMet(Children, context)) {
             children = SimplifyChildren(Children);
 
             if(TrySimplify(children, context, out MathExpression? resultDown) && resultDown != null) {
@@ -42,7 +42,7 @@ public abstract class GroupExpression : MathExpression {
 
         children = children.Select(e => e.Simplify(context.CreateSubContext(e)));
 
-        if(Condition(Children, context)) {
+        if(ConditionIsMet(Children, context)) {
             children = SimplifyChildren(Children);
 
             if(TrySimplify(children, context, out MathExpression? resultUp) && resultUp != null) {
@@ -59,7 +59,7 @@ public abstract class GroupExpression : MathExpression {
 
     protected abstract IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children);
 
-    protected abstract bool Condition(IEnumerable<MathExpression> children, Context context);
+    protected abstract bool ConditionIsMet(IEnumerable<MathExpression> children, Context context);
 
     protected abstract bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result);
 
@@ -69,7 +69,7 @@ public abstract class GroupExpression : MathExpression {
     }
 
     protected MathType EvaluateType(Context context) {
-        if(Condition(Children, context)) {
+        if(ConditionIsMet(Children, context)) {
             return ComputeType(Children, context);
         } else {
             return MathType.Universe;
@@ -80,5 +80,5 @@ public abstract class GroupExpression : MathExpression {
 
     protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> children);
 
-    public override MathExpression Clone() => CreateInstance(Children);
+    public override MathExpression Clone() => CreateInstance(Children.Select(e => e.Clone()));
 }

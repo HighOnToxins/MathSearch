@@ -3,23 +3,23 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions.Propersitions;
 
-public class ConjunctionExpression: GroupExpression {
+public class ConjunctionExpression: OperatorExpression {
 
-    public override HashSet<MathExpression> Children { get; }
+    public override IReadOnlySet<MathExpression> Children { get; }
 
     public ConjunctionExpression(params MathExpression[] children) {
-        Children = new(children);
+        Children = new HashSet<MathExpression>(children);
     }
 
     public ConjunctionExpression(IEnumerable<MathExpression> children) {
-        Children = new(children);
+        Children = new HashSet<MathExpression>(children);
     }
 
     public ConjunctionExpression(HashSet<MathExpression> children) {
         Children = children;
     }
 
-    protected override bool Condition(IEnumerable<MathExpression> children, Context context) {
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) {
         return children.All(e => e.DetermineType(context) == MathType.Boolean);
     }
 
