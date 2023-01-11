@@ -14,19 +14,19 @@ public sealed class SetExpression: GroupExpression {
         Children = children;
     }
 
-    public override MathType ComputeType(IEnumerable<MathType> simplifiedChild, Context context) =>
+    protected override MathType ComputeType(IEnumerable<MathType> simplifiedChild, Context context) =>
         MathType.Set;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
         new SetExpression(Children);
 
-    public override bool Condition(IEnumerable<MathExpression> children, Context context) {
+    protected override bool Condition(IEnumerable<MathExpression> children, Context context) {
         return false;
     }
 
-    public override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
+    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
-    public override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
+    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
         result = null;
         return false;
     }

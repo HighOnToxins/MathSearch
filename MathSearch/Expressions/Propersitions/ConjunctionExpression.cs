@@ -15,16 +15,16 @@ public class ConjunctionExpression: GroupExpression {
         Children = children;
     }
 
-    public override bool Condition(IEnumerable<MathExpression> children, Context context) { //TODO: FIX PLZ!
+    protected override bool Condition(IEnumerable<MathExpression> children, Context context) { //TODO: FIX PLZ!
         return children.All(e => e.DetermineType(CreateSubContext(context, children.Where(e2 => !e2.Equals(e)))) == MathType.Boolean);
     }
 
-    public override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
+    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
         children
             .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
             .SelectMany(e => e.Extract<ConjunctionExpression>());
 
-    public override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
+    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
         if(simplifiedChildren.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
             return true;
@@ -37,7 +37,7 @@ public class ConjunctionExpression: GroupExpression {
         return false;
     }
 
-    public override MathType ComputeType(IEnumerable<MathType> simplifiedChild, Context context) =>
+    protected override MathType ComputeType(IEnumerable<MathType> simplifiedChild, Context context) =>
         MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>

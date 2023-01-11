@@ -19,16 +19,16 @@ public sealed class DisjunctionExpression: GroupExpression {
         Children = children;
     }
 
-    public override bool Condition(IEnumerable<MathExpression> children, Context context) {
+    protected override bool Condition(IEnumerable<MathExpression> children, Context context) {
         return children.All(e => e.DetermineType(CreateSubContext(context, children.Where(e2 => !e2.Equals(e)))) == MathType.Boolean);
     }
 
-    public override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
+    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
         children
             .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
             .SelectMany(e => e.Extract<DisjunctionExpression>());
 
-    public override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
+    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
         if(simplifiedChildren.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
             return true;
@@ -41,7 +41,7 @@ public sealed class DisjunctionExpression: GroupExpression {
         return false;
     }
 
-    public override MathType ComputeType(IEnumerable<MathType> childTypes, Context context) => MathType.Boolean;
+    protected override MathType ComputeType(IEnumerable<MathType> childTypes, Context context) => MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
         new DisjunctionExpression(children);

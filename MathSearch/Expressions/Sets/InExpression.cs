@@ -8,10 +8,10 @@ public sealed class InExpression: BinaryExpression {
     public InExpression(MathExpression leftChild, MathExpression rightChild) : base(leftChild, rightChild) {
     }
 
-    public override bool Condition(MathExpression leftChild, MathExpression rightChild, Context context) =>
+    protected override bool Condition(MathExpression leftChild, MathExpression rightChild, Context context) =>
         rightChild.DetermineType(context) == MathType.Set;
 
-    public override bool TrySimplify(MathExpression simplifiedLeft, MathExpression simplifiedRight, Context context, out MathExpression? result) {
+    protected override bool TrySimplify(MathExpression simplifiedLeft, MathExpression simplifiedRight, Context context, out MathExpression? result) {
 
         if(simplifiedRight is SetExpression setExpression) {
             result = new BooleanExpression(setExpression.Children.Contains(simplifiedLeft));
@@ -31,7 +31,7 @@ public sealed class InExpression: BinaryExpression {
         return false;
     }
 
-    public override MathType TryDetermineType(MathType leftType, MathType rightType, Context context) =>
+    protected override MathType ComputeType(MathType leftType, MathType rightType, Context context) =>
         rightType == MathType.Set ? MathType.Boolean : MathType.Universe;
 
     protected override MathExpression CreateInstance(MathExpression leftChild, MathExpression rightChild) =>

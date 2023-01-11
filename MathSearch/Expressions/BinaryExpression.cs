@@ -1,79 +1,57 @@
 ﻿using MathSearch.Expression;
+using MathSearch.Expressions.Propersitions;
+using MathSearch.Expressions.Sets;
 
 namespace MathSearch.Expressions;
 
-public abstract class BinaryExpression : MathExpression{
+public abstract class BinaryExpression : GroupExpression{
 
-    public MathExpression LeftChild { get; private init; }
+    private static T GetLeftChild<T>(IEnumerable<T> children) => children.First();
+    private static T GetRightChild<T>(IEnumerable<T> children) => children.ElementAt(1);
+    private static void SetLeftChild<T>(T[] children, T expression) { children[0] = expression; }
+    private static void SetRightChild<T>(T[] children, T expression) { children[1] = expression; }
 
-    public MathExpression RightChild { get; private init; }
+    public override IReadOnlyList<MathExpression> Children { get; }
+
+    public MathExpression LeftChild { get => GetLeftChild(Children); }
+
+    public MathExpression RightChild { get => GetRightChild(Children); }
 
     public override int ChildCount => 2;
 
     public BinaryExpression(MathExpression leftChild, MathExpression rightChild) {
-        LeftChild = leftChild;
-        RightChild = rightChild;
+        MathExpression[] children = new MathExpression[ChildCount];
+        Children = children;
+        SetLeftChild(children, leftChild);
+        SetRightChild(children, rightChild);
     }
 
-    public override IEnumerable<MathExpression> GetChildren() { 
-        yield return LeftChild;
-        yield return RightChild;
-    }
+    protected override bool Condition(IEnumerable<MathExpression> children, Context context) =>
+        Condition(GetLeftChild(children), GetRightChild(children), context);
 
-    //TODO: Use a better method for creating expressions of different sizes.
+    protected abstract bool Condition(MathExpression leftChild, MathExpression rightChild, Context context);
 
-    public override MathExpression Simplify(Context? context = null) {
-        context ??= new();
-        return context.ReplaceEquality(EvaluateSimplification(context));
-    }
+    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
-    private MathExpression EvaluateSimplification(Context context) {
+    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) =>
+        TrySimplify(GetLeftChild(simplifiedChildren), GetRightChild(simplifiedChildren), context, out result);
 
-        if(!Condition(LeftChild, RightChild, context)) {
-            return Clone();
-        }
+    protected abstract bool TrySimplify(MathExpression simplifiedLeft, MathExpression simplifiedRight, Context context, out MathExpression? result);
 
-        //down
-        if(Condition(LeftChild, RightChild, context) &&
-                TrySimplify(LeftChild, RightChild, context, out MathExpression? resultDown) && resultDown != null) {
-            return resultDown;
-        }
+    protected override MathType ComputeType(IEnumerable<MathType> childTypes, Context context) =>
+        ComputeType(GetLeftChild(childTypes), GetRightChild(childTypes), context);
 
-        //children
-        MathExpression simplifiedLeft = LeftChild.Simplify(CreateSubContext(context, new MathExpression[] { RightChild }));
-        MathExpression simplifiedRight = RightChild.Simplify(CreateSubContext(context, new MathExpression[] { LeftChild }));
+    protected abstract MathType ComputeType(MathType leftType, MathType rightType, Context context);
 
-        if(Condition(simplifiedLeft, simplifiedRight, context) && 
-                TrySimplify(simplifiedLeft, simplifiedRight, context, out MathExpression? resultUp) && resultUp != null) {
-            return resultUp;
-        }
-
-        return CreateInstance(simplifiedLeft, simplifiedRight);
-    }
-
-    public abstract bool Condition(MathExpression leftChild, MathExpression rightChild, Context context);
-
-    public abstract bool TrySimplify(MathExpression leftChild, MathExpression rightChild, Context context, out MathExpression? result);
-
-    public override MathType DetermineType(Context? context = null) {
-        context ??= new();
-
-        //TODO: Check for the actual output, and determine which of the type are the smallest
-
-        if(Condition(LeftChild, RightChild, context)) {
-            return TryDetermineType(
-                LeftChild.DetermineType(CreateSubContext(context, new MathExpression[] { RightChild })),
-                RightChild.DetermineType(CreateSubContext(context, new MathExpression[] { LeftChild })),
-                context);
-        } else {
-            return context.DetermineType(this);
-        }
-    }
-
-    public abstract MathType TryDetermineType(MathType leftType, MathType rightType, Context context);
+    protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
+        CreateInstance(GetLeftChild(simplifiedChildren), GetRightChild(simplifiedChildren));
 
     protected abstract MathExpression CreateInstance(MathExpression leftChild, MathExpression rightChild);
 
-    public override MathExpression Clone() => CreateInstance(LeftChild, RightChild);
+    public override void AddToContext(Context context) {
+        if(RightChild is TypeExpression typeExpression) {
+            context.AddType(LeftChild, typeExpression.Value);
+        }
+    }
 
 }

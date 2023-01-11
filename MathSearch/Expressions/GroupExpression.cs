@@ -5,11 +5,11 @@ namespace MathSearch.Expressions;
 
 public abstract class GroupExpression : MathExpression {
 
-    public virtual ICollection<MathExpression> Children { get;}
+    public virtual IReadOnlyCollection<MathExpression> Children { get;}
 
     public override int ChildCount => Children.Count;
 
-    public GroupExpression(ICollection<MathExpression> children) {
+    public GroupExpression(IReadOnlyCollection<MathExpression> children) {
         Children = children;
     }
 
@@ -46,18 +46,18 @@ public abstract class GroupExpression : MathExpression {
         return CreateInstance(simplifiedChildren);
     }
 
-    public abstract IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children);
+    protected abstract IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children);
 
-    public abstract bool Condition(IEnumerable<MathExpression> children, Context context);
+    protected abstract bool Condition(IEnumerable<MathExpression> children, Context context);
 
-    public abstract bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result);
+    protected abstract bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result);
 
     public override MathType DetermineType(Context? context = null) {
         context ??= new();
         return EvaluateType(context).Intersect(context.DetermineType(this));
     }
 
-    public MathType EvaluateType(Context context) {
+    protected MathType EvaluateType(Context context) {
         if(Condition(Children, context)) {
             return ComputeType(
                 Children.Select(e => e.DetermineType(CreateSubContext(context, Children.Where(e2 => !e2.Equals(e))))),
@@ -67,7 +67,7 @@ public abstract class GroupExpression : MathExpression {
         }
     }
 
-    public abstract MathType ComputeType(IEnumerable<MathType> childTypes, Context context);
+    protected abstract MathType ComputeType(IEnumerable<MathType> childTypes, Context context);
 
     protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren);
 
