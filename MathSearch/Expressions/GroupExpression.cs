@@ -1,5 +1,6 @@
 ﻿
 using MathSearch.Expression;
+using MathSearch.Expressions.Basics;
 
 namespace MathSearch.Expressions;
 
@@ -21,29 +22,39 @@ public abstract class GroupExpression : MathExpression {
 
     public override MathExpression Simplify(Context? context = null) {
         context ??= new();
-        return context.ReplaceEquality(EvaluateSimplification(context));
+        return context.Simplify(EvaluateSimplification(context));
     }
 
     private MathExpression EvaluateSimplification(Context context) {
-        if(!Condition(Children, context)) {
-            return CreateInstance(Children);
+
+        IEnumerable<MathExpression> children = Children;
+
+        if(Condition(Children, context)) {
+            children = SimplifyChildren(Children);
+
+            if(TrySimplify(children, context, out MathExpression? resultDown) && resultDown != null) {
+                return resultDown;
+            }
+
+            context.AddContext(AddToContext(children));
         }
 
-        IEnumerable<MathExpression> simplifiedChildren = SimplifyChildren(Children);
 
-        if(TrySimplify(simplifiedChildren, context, out MathExpression? resultDown) && resultDown != null) {
-            return resultDown;
+        children = children.Select(e => e.Simplify(context.CreateSubContext(e)));
+
+        if(Condition(Children, context)) {
+            children = SimplifyChildren(Children);
+
+            if(TrySimplify(children, context, out MathExpression? resultUp) && resultUp != null) {
+                return resultUp;
+            }
         }
 
-        //TODO: DETERMINE SUB CONTEXT PROPERLY?
-        simplifiedChildren = SimplifyChildren(simplifiedChildren
-            .Select(e => e.Simplify(CreateSubContext(context, simplifiedChildren.Where(e2 => !e2.Equals(e))))));
-
-        if(TrySimplify(simplifiedChildren, context, out MathExpression? resultUp) && resultUp != null) {
-            return resultUp;
+        if(!children.Any() || children.Contains(new EmptyExpression())) {
+            return new EmptyExpression();
+        } else {
+            return CreateInstance(children);
         }
-
-        return CreateInstance(simplifiedChildren);
     }
 
     protected abstract IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children);
@@ -59,17 +70,15 @@ public abstract class GroupExpression : MathExpression {
 
     protected MathType EvaluateType(Context context) {
         if(Condition(Children, context)) {
-            return ComputeType(
-                Children.Select(e => e.DetermineType(CreateSubContext(context, Children.Where(e2 => !e2.Equals(e))))),
-                context);
+            return ComputeType(Children, context);
         } else {
             return MathType.Universe;
         }
     }
 
-    protected abstract MathType ComputeType(IEnumerable<MathType> childTypes, Context context);
+    protected abstract MathType ComputeType(IEnumerable<MathExpression> children, Context context);
 
-    protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren);
+    protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> children);
 
     public override MathExpression Clone() => CreateInstance(Children);
 }

@@ -16,9 +16,7 @@ public abstract class MathExpression : ICloneable, IComparable<MathExpression>, 
 
     object ICloneable.Clone() => Clone();
 
-    public abstract void AddToContext(Context context);
-
-    public abstract Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions);
+    protected abstract IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children);
 
     public IEnumerable<MathExpression> Extract<T>() where T : MathExpression{
         if(this is T) {

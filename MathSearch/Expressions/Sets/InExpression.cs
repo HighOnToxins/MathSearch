@@ -18,32 +18,33 @@ public sealed class InExpression: BinaryExpression {
             return true;
         }
 
+        //TODO: Write simplification for in-operator.
+
         //Check context for typeInfo or in equality with true or false
 
-        //TODO: Add SetBuilder extractor.
+        // Add SetBuilder extractor.
 
         //if(simplifiedRightChild is SetExpression setExpression) {
         //    IEnumerable<MathExpression> children = setExpression.Children.Select(e => new EqualsExpression(LeftChild, e));
         //    result = new DisjunctionExpression(children);
         //}
 
+        //simplify in-boolean-set 
+
+        //check if context agrees
+
+        //anything contained within empty type is false
+
         result = null;
         return false;
     }
 
-    protected override MathType ComputeType(MathType leftType, MathType rightType, Context context) =>
-        rightType == MathType.Set ? MathType.Boolean : MathType.Universe;
+    protected override MathType ComputeType(MathExpression leftChild, MathExpression rightChild, Context context) =>
+        rightChild.DetermineType(context) == MathType.Set ? MathType.Boolean : MathType.Universe;
 
     protected override MathExpression CreateInstance(MathExpression leftChild, MathExpression rightChild) =>
         new InExpression(leftChild, rightChild);
 
-    public override void AddToContext(Context context) {
-        if(RightChild is TypeExpression typeExpression) {
-            context.AddType(LeftChild, typeExpression.Value);
-        }
-    }
+    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
 
-    public override Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions) {
-        return context;
-    }
 }

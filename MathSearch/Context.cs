@@ -1,49 +1,59 @@
 ﻿
 using MathSearch.Expression;
 using MathSearch.Expressions;
+using MathSearch.Expressions.Propersitions;
+using MathSearch.Expressions.Sets;
+using System.Linq;
 
 namespace MathSearch;
 
-//TODO: Structure the context such that it becomes easy to create sub-contexts.
-
 public sealed class Context {
 
-    private readonly Dictionary<MathExpression, MathExpression> replacements;
+    private readonly HashSet<MathExpression> expressions;
 
-    private readonly Dictionary<MathExpression, MathType> typeInfo;
+    private readonly List<MathExpression> currentLayerContext;
+
+    //TODO: Cache sub contexts.
 
     internal Context() {
-        replacements = new Dictionary<MathExpression, MathExpression>();
-        typeInfo = new Dictionary<MathExpression, MathType>();
+        expressions = new();
+        currentLayerContext = new();
     }
 
-    private Context(Dictionary<MathExpression, MathExpression> replacements,  Dictionary<MathExpression, MathType> typeInfo) {
-        this.replacements = new(replacements);
-        this.typeInfo = new();
+    private Context(IEnumerable<MathExpression> expressions) {
+        this.expressions = new(expressions);
+        currentLayerContext = new();
     }
 
-    internal MathExpression ReplaceEquality(MathExpression expression) {
-        if(replacements.TryGetValue(expression, out MathExpression? replacement) && replacement != null) {
-            return replacement;
-        } else {
-            return expression;
+    internal MathExpression Simplify(MathExpression expression) {
+        if(expressions.Contains(expression)) {
+            return new BooleanExpression(true);
         }
+
+        return expression;
     }
 
-    internal MathType DetermineType(MathExpression expression) { 
-        if(typeInfo.TryGetValue(expression, out MathType type)) {
-            return type;
-        } else {
-            return MathType.Universe;
+    internal MathType DetermineType(MathExpression expression) {
+        IEnumerable<MathType> types = expressions
+            .OfType<InExpression>()
+            .Where(i => i.LeftChild.Equals(expression) && i.RightChild is TypeExpression)
+            .Select(i => i.RightChild is TypeExpression typeExpression ? typeExpression.Value : MathType.Universe);
+
+        MathType type = MathType.Universe;
+        foreach(MathType t in types) {
+            type = type.Intersect(t);
         }
+
+        return type;
     }
 
-    internal void AddReplacement(MathExpression expression, MathExpression replacement) =>
-        replacements.Add(expression, replacement);
+    internal void AddContext(IEnumerable<MathExpression> expressions) {
+        currentLayerContext.AddRange(expressions);
+    }
 
-    internal void AddType(MathExpression expression, MathType type) =>
-        typeInfo.Add(expression, type);
-
-    internal Context Clone() => new(replacements, typeInfo);
-
+    internal Context CreateSubContext(MathExpression e) {
+        return new Context(currentLayerContext
+            .Except(new MathExpression[] { e })
+            .Concat(expressions));
+    }
 }

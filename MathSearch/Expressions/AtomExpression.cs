@@ -19,16 +19,9 @@ public abstract class AtomExpression: MathExpression {
         yield break;
     }
 
-
-    public override void AddToContext(Context context) { }
-
-    public override Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions) {
-        return context;
-    }
-
     public override MathExpression Simplify(Context? context = null) {
         if(context != null) {
-            return context.ReplaceEquality(this);
+            return context.Simplify(this);
         } else {
             return Clone();
         }
@@ -38,6 +31,8 @@ public abstract class AtomExpression: MathExpression {
         context ??= new();
         return Type.Intersect(context.DetermineType(this));
     }
+
+    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
 
     public override bool Equals(MathExpression? other) =>
         other is AtomExpression atomOther &&

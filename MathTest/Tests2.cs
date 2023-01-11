@@ -5,14 +5,16 @@ using MathSearch.Expressions.Sets;
 
 namespace MathTest;
 
-public class Tests {
+public class Tests2 {
 
     [Test]
     public void TypeOfConjunctionIsBoolean() {
 
         MathExpression expression = new ConjunctionExpression(
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new VariableExpression("a"),
+            new DisjunctionExpression(
+                new BooleanExpression(false),
+                new BooleanExpression(true)
+            ),
             new BooleanExpression(true)
         );
 
@@ -26,7 +28,7 @@ public class Tests {
 
         MathExpression expression = new ConjunctionExpression(
             new ConjunctionExpression(
-                new VariableExpression("a"), 
+                new VariableExpression("a"),
                 new BooleanExpression(false)
             ),
             new BooleanExpression(true)
@@ -42,8 +44,6 @@ public class Tests {
     public void SimplificationOfConjunctionIsFalse() {
 
         MathExpression expression = new ConjunctionExpression(
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new VariableExpression("a"),
             new BooleanExpression(false)
         );
 
@@ -52,30 +52,28 @@ public class Tests {
         Assert.That(result, Is.EqualTo(new BooleanExpression(false)));
     }
 
-
     [Test]
-    public void CheckSimplfingConjunctionWorks() {
+    public void CheckUnsimplifyableConjunctionWorks() {
 
         MathExpression expression = new ConjunctionExpression(
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("c"), new TypeExpression(MathType.Boolean)),
             new ConjunctionExpression(
                 new VariableExpression("a"),
                 new VariableExpression("b")
             ),
-             new DisjunctionExpression(
-                 new VariableExpression("a"),
-                 new VariableExpression("c")
-             )
+            new ConjunctionExpression(
+                new BooleanExpression(false),
+                new BooleanExpression(true)
+            ),
+            new BooleanExpression(true)
         );
 
         MathExpression expected = new ConjunctionExpression(
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("c"), new TypeExpression(MathType.Boolean)),
-            new VariableExpression("a"),
-            new VariableExpression("b")
+            new ConjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("b")
+            ),
+            new BooleanExpression(false),
+            new BooleanExpression(true)
         );
 
         MathExpression result = expression.Simplify();

@@ -14,7 +14,7 @@ public sealed class SetExpression: GroupExpression {
         Children = children;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathType> simplifiedChild, Context context) =>
+    protected override MathType ComputeType(IEnumerable<MathExpression> simplifiedChild, Context context) =>
         MathType.Set;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
@@ -27,13 +27,12 @@ public sealed class SetExpression: GroupExpression {
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
     protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
+
+        //simplify empty to TypeExpression of nothing
+
         result = null;
         return false;
     }
 
-    public override void AddToContext(Context context) { }
-
-    public override Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions) {
-        return context;
-    }
+    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
 }

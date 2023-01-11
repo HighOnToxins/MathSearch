@@ -1,6 +1,4 @@
 ﻿using MathSearch.Expression;
-using MathSearch.Expressions.Propersitions;
-using MathSearch.Expressions.Sets;
 
 namespace MathSearch.Expressions;
 
@@ -38,20 +36,14 @@ public abstract class BinaryExpression : GroupExpression{
 
     protected abstract bool TrySimplify(MathExpression simplifiedLeft, MathExpression simplifiedRight, Context context, out MathExpression? result);
 
-    protected override MathType ComputeType(IEnumerable<MathType> childTypes, Context context) =>
+    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) =>
         ComputeType(GetLeftChild(childTypes), GetRightChild(childTypes), context);
 
-    protected abstract MathType ComputeType(MathType leftType, MathType rightType, Context context);
+    protected abstract MathType ComputeType(MathExpression leftChild, MathExpression rightChild, Context context);
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
         CreateInstance(GetLeftChild(simplifiedChildren), GetRightChild(simplifiedChildren));
 
     protected abstract MathExpression CreateInstance(MathExpression leftChild, MathExpression rightChild);
-
-    public override void AddToContext(Context context) {
-        if(RightChild is TypeExpression typeExpression) {
-            context.AddType(LeftChild, typeExpression.Value);
-        }
-    }
 
 }
