@@ -15,6 +15,12 @@ public sealed class Context {
         typeInfo = new Dictionary<MathExpression, ExpressionType>();
     }
 
+    private Context(Dictionary<MathExpression, MathExpression> replacements,  Dictionary<MathExpression, ExpressionType> typeInfo) {
+        this.replacements = new(replacements);
+        this.typeInfo = new(typeInfo);
+    }
+
+
     public bool TryDetermineReplacement(in MathExpression expression, out MathExpression? replacement) =>
         replacements.TryGetValue(expression, out replacement);
 
@@ -35,4 +41,5 @@ public sealed class Context {
     public void AddType(MathExpression expression, ExpressionType type) =>
         typeInfo.Add(expression, type);
 
+    public Context Clone() => new(replacements, typeInfo);
 }

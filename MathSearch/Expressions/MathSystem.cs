@@ -3,7 +3,7 @@ using MathSearch.Expressions.Propersitions;
 
 namespace MathSearch.Expressions;
 
-public sealed class MathSystem : AndExpression{
+public sealed class MathSystem : ConjunctionExpression{
 
 
 

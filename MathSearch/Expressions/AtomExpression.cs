@@ -17,12 +17,29 @@ public abstract class AtomExpression: MathExpression {
         yield break;
     }
 
-    public override MathExpression Simplify() =>
-        Clone();
-    
-    public override ExpressionType DetermineType() {
+
+    public override void AddToContext(Context context) { }
+
+    public override Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions) {
+        return context;
+    }
+
+    public override MathExpression Simplify(Context? context = null) {
+        if(context != null && context.TryDetermineReplacement(this, out MathExpression? replacement) && replacement != null) {
+            return replacement;
+        } else {
+            return Clone();
+        }
+    }
+
+    public override ExpressionType DetermineType(Context? context = null) {
+
+        //TODO: Combine types.
+
         if(Attribute.GetCustomAttribute(GetType(), typeof(IndependentAttribute)) is IndependentAttribute attrib) {
             return attrib.Type;
+        } else if(context != null){
+            return context.DetermineType(this);
         } else {
             return ExpressionType.Universe;
         }

@@ -16,8 +16,18 @@ public abstract class MathExpression : ICloneable, IComparable<MathExpression>, 
 
     object ICloneable.Clone() => Clone();
 
-    public abstract void AddToContext(ref Context context);
-    
+    public abstract void AddToContext(Context context);
+
+    public abstract Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions);
+
+    public IEnumerable<MathExpression> Extract<T>() where T : MathExpression{
+        if(this is T) {
+            return GetChildren().SelectMany(c => c.Extract<T>());
+        } else {
+            return new[] { Clone() };
+        }
+    }
+
     public virtual bool Equals(MathExpression? other) {
         if(other == null || !other.GetType().IsEquivalentTo(GetType())) {
             return false;
