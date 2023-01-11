@@ -20,21 +20,19 @@ public sealed class DisjunctionExpression: GroupExpression {
     }
 
     public override bool Condition(IEnumerable<MathExpression> children, Context context) {
-        return children.All(e => e.DetermineType(CreateSubContext(context, children.Where(e2 => !e2.Equals(e)))) == ExpressionType.Boolean);
+        return children.All(e => e.DetermineType(CreateSubContext(context, children.Where(e2 => !e2.Equals(e)))) == MathType.Boolean);
     }
 
-    public override bool TrySimplifyChildren(in IEnumerable<MathExpression> children, Context context, out IEnumerable<MathExpression> result) {
-        result = children
+    public override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
+        children
             .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
             .SelectMany(e => e.Extract<DisjunctionExpression>());
-        return true;
-    }
 
-    public override bool TryCompute(in IEnumerable<MathExpression> children, out MathExpression? result) {
-        if(children.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
+    public override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
+        if(simplifiedChildren.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
             return true;
-        } else if(children.Any(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
+        } else if(simplifiedChildren.Any(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
             result = new BooleanExpression(true);
             return true;
         }
@@ -43,20 +41,8 @@ public sealed class DisjunctionExpression: GroupExpression {
         return false;
     }
 
-    public override bool TrySimplifyDown(in IEnumerable<MathExpression> children, Context context, out MathExpression? result) {
-        result = null;
-        return false;
-    }
-
-    public override bool TrySimplifyUp(in IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
-        result = null;
-        return false;
-    }
-
-    public override bool TryDetermineType(in IEnumerable<ExpressionType> simplifiedChild, Context context, out ExpressionType result) {
-        result = ExpressionType.Boolean;
-        return true;
-    }
+    public override MathType EvaluateType(IEnumerable<MathType> childTypes, Context context) =>
+        MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
         new DisjunctionExpression(children);

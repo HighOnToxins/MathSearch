@@ -3,9 +3,9 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions.Sets;
 
-[Independent(ExpressionType.Set)]
-public sealed class TypeExpression: AtomExpression<ExpressionType> {
-    public TypeExpression(ExpressionType value) : base(value) {
+[Independent(MathType.Set)]
+public sealed class TypeExpression: AtomExpression<MathType> {
+    public TypeExpression(MathType value) : base(value) {
     }
 
     public override MathExpression Clone() =>

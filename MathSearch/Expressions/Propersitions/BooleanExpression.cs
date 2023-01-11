@@ -3,7 +3,7 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions.Propersitions;
 
-[Independent(ExpressionType.Boolean)]
+[Independent(MathType.Boolean)]
 public sealed class BooleanExpression: AtomExpression<bool> {
     public BooleanExpression(bool value) : base(value) {
     }

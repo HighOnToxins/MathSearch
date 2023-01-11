@@ -10,38 +10,40 @@ public sealed class Context {
 
     private readonly Dictionary<MathExpression, MathExpression> replacements;
 
-    private readonly Dictionary<MathExpression, ExpressionType> typeInfo;
+    private readonly Dictionary<MathExpression, MathType> typeInfo;
 
-    public Context() {
+    internal Context() {
         replacements = new Dictionary<MathExpression, MathExpression>();
-        typeInfo = new Dictionary<MathExpression, ExpressionType>();
+        typeInfo = new Dictionary<MathExpression, MathType>();
     }
 
-    private Context(Dictionary<MathExpression, MathExpression> replacements,  Dictionary<MathExpression, ExpressionType> typeInfo) {
+    private Context(Dictionary<MathExpression, MathExpression> replacements,  Dictionary<MathExpression, MathType> typeInfo) {
         this.replacements = new(replacements);
         this.typeInfo = new();
     }
 
-
-    public bool TryDetermineReplacement(in MathExpression expression, out MathExpression? replacement) =>
-        replacements.TryGetValue(expression, out replacement);
-
-    public bool TryDetermineType(in MathExpression expression, out ExpressionType type) =>
-        typeInfo.TryGetValue(expression, out type);
-
-    public ExpressionType DetermineType(MathExpression expression) { 
-        if(TryDetermineType(expression, out ExpressionType type)) {
-            return type;
+    internal MathExpression ReplaceEquality(MathExpression expression) {
+        if(replacements.TryGetValue(expression, out MathExpression? replacement) && replacement != null) {
+            return replacement;
         } else {
-            return ExpressionType.Universe;
+            return expression;
         }
     }
 
-    public void AddReplacement(MathExpression expression, MathExpression replacement) =>
+    internal MathType DetermineType(MathExpression expression) { 
+        if(typeInfo.TryGetValue(expression, out MathType type)) {
+            return type;
+        } else {
+            return MathType.Universe;
+        }
+    }
+
+    internal void AddReplacement(MathExpression expression, MathExpression replacement) =>
         replacements.Add(expression, replacement);
 
-    public void AddType(MathExpression expression, ExpressionType type) =>
+    internal void AddType(MathExpression expression, MathType type) =>
         typeInfo.Add(expression, type);
 
-    public Context Clone() => new(replacements, typeInfo);
+    internal Context Clone() => new(replacements, typeInfo);
+
 }

@@ -14,10 +14,8 @@ public sealed class SetExpression: GroupExpression {
         Children = children;
     }
 
-    public override bool TryDetermineType(in IEnumerable<ExpressionType> simplifiedChild, Context context, out ExpressionType result) {
-        result = ExpressionType.Set;
-        return true;
-    }
+    public override MathType EvaluateType(IEnumerable<MathType> simplifiedChild, Context context) =>
+        MathType.Set;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
         new SetExpression(Children);
@@ -26,22 +24,9 @@ public sealed class SetExpression: GroupExpression {
         return false;
     }
 
-    public override bool TryCompute(in IEnumerable<MathExpression> children, out MathExpression? result) {
-        result = null;
-        return false;
-    }
+    public override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
-    public override bool TrySimplifyChildren(in IEnumerable<MathExpression> children, Context context, out IEnumerable<MathExpression> result) {
-        result = Array.Empty<MathExpression>();
-        return false;
-    }
-
-    public override bool TrySimplifyDown(in IEnumerable<MathExpression> children, Context context, out MathExpression? result) {
-        result = null;
-        return false;
-    }
-
-    public override bool TrySimplifyUp(in IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
+    public override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
         result = null;
         return false;
     }

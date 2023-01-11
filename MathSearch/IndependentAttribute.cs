@@ -1,6 +1,6 @@
 ﻿namespace MathSearch.Expression;
 
-public enum ExpressionType {
+public enum MathType {
     Nothing,
     Set,
     Boolean,
@@ -12,9 +12,9 @@ public enum ExpressionType {
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class IndependentAttribute: Attribute {
 
-    public ExpressionType Type { get; private init; }
+    public MathType Type { get; private init; }
 
-    public IndependentAttribute(ExpressionType type) {
+    public IndependentAttribute(MathType type) {
         Type = type;
     }
 }

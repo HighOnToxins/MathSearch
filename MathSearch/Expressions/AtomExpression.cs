@@ -25,14 +25,14 @@ public abstract class AtomExpression: MathExpression {
     }
 
     public override MathExpression Simplify(Context? context = null) {
-        if(context != null && context.TryDetermineReplacement(this, out MathExpression? replacement) && replacement != null) {
-            return replacement;
+        if(context != null) {
+            return context.ReplaceEquality(this);
         } else {
             return Clone();
         }
     }
 
-    public override ExpressionType DetermineType(Context? context = null) {
+    public override MathType DetermineType(Context? context = null) {
 
         //TODO: Combine types.
 
@@ -41,7 +41,7 @@ public abstract class AtomExpression: MathExpression {
         } else if(context != null){
             return context.DetermineType(this);
         } else {
-            return ExpressionType.Universe;
+            return MathType.Universe;
         }
     }
 

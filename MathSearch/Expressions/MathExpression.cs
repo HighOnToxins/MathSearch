@@ -10,7 +10,7 @@ public abstract class MathExpression : ICloneable, IComparable<MathExpression>, 
     
     public abstract MathExpression Simplify(Context? context = null);
 
-    public abstract ExpressionType DetermineType(Context? context = null); 
+    public abstract MathType DetermineType(Context? context = null); 
 
     public abstract MathExpression Clone();
 

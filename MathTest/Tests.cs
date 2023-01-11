@@ -11,14 +11,14 @@ public class Tests {
     public void TypeOfConjunctionIsBoolean() {
 
         MathExpression expression = new ConjunctionExpression(
-            new InExpression(new VariableExpression("a"), new TypeExpression(ExpressionType.Boolean)),
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
             new VariableExpression("a"),
             new BooleanExpression(true)
         );
 
-        ExpressionType type = expression.DetermineType();
+        MathType type = expression.DetermineType();
 
-        Assert.That(type, Is.EqualTo(ExpressionType.Boolean));
+        Assert.That(type, Is.EqualTo(MathType.Boolean));
     }
 
     [Test]
@@ -32,9 +32,9 @@ public class Tests {
             new BooleanExpression(true)
         );
 
-        ExpressionType type = expression.DetermineType();
+        MathType type = expression.DetermineType();
 
-        Assert.That(type, Is.EqualTo(ExpressionType.Universe));
+        Assert.That(type, Is.EqualTo(MathType.Universe));
     }
 
 
@@ -42,7 +42,7 @@ public class Tests {
     public void SimplificationOfConjunctionIsFalse() {
 
         MathExpression expression = new ConjunctionExpression(
-            new InExpression(new VariableExpression("a"), new TypeExpression(ExpressionType.Boolean)),
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
             new VariableExpression("a"),
             new BooleanExpression(false)
         );
