@@ -4,6 +4,8 @@ using MathSearch.Expressions;
 
 namespace MathSearch;
 
+//TODO: Structure the context such that it becomes easy to create sub-contexts.
+
 public sealed class Context {
 
     private readonly Dictionary<MathExpression, MathExpression> replacements;
