@@ -20,38 +20,64 @@ public sealed class DisjunctionExpression: GroupExpression {
     }
 
     public override bool Condition(IEnumerable<MathExpression> children, Context context) {
-        throw new NotImplementedException();
-    }
-
-    public override bool TryCompute(in IEnumerable<MathExpression> children, out MathExpression? result) {
-        throw new NotImplementedException();
-    }
-
-    public override bool TryDetermineType(in IEnumerable<ExpressionType> simplifiedChild, Context context, out ExpressionType result) {
-        throw new NotImplementedException();
+        return children.All(e => e.DetermineType(CreateSubContext(context, children.Where(e2 => !e2.Equals(e)))) == ExpressionType.Boolean);
     }
 
     public override bool TrySimplifyChildren(in IEnumerable<MathExpression> children, Context context, out IEnumerable<MathExpression> result) {
-        throw new NotImplementedException();
+        result = children
+            .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
+            .SelectMany(e => e.Extract<DisjunctionExpression>());
+        return true;
+    }
+
+    public override bool TryCompute(in IEnumerable<MathExpression> children, out MathExpression? result) {
+        if(children.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
+            result = new BooleanExpression(false);
+            return true;
+        } else if(children.Any(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
+            result = new BooleanExpression(true);
+            return true;
+        }
+
+        result = null;
+        return false;
     }
 
     public override bool TrySimplifyDown(in IEnumerable<MathExpression> children, Context context, out MathExpression? result) {
-        throw new NotImplementedException();
+        result = null;
+        return false;
     }
 
     public override bool TrySimplifyUp(in IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
-        throw new NotImplementedException();
+        result = null;
+        return false;
     }
 
-    protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) {
-        throw new NotImplementedException();
+    public override bool TryDetermineType(in IEnumerable<ExpressionType> simplifiedChild, Context context, out ExpressionType result) {
+        result = ExpressionType.Boolean;
+        return true;
     }
+
+    protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
+        new DisjunctionExpression(children);
 
     public override void AddToContext(Context context) {
-        throw new NotImplementedException();
+        foreach(MathExpression child in Children) {
+            //TODO: Add not expressions to context
+            //TODO: Add not equals to context
+
+            context.AddReplacement(child, new BooleanExpression(false));
+            //child.AddInverseToContext(context); //TODO: Add inverse to context.
+        }
     }
 
     public override Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions) {
-        throw new NotImplementedException();
+        Context result = context.Clone();
+
+        foreach(MathExpression expression in expressions) {
+            expression.AddToContext(result);
+        }
+
+        return result;
     }
 }

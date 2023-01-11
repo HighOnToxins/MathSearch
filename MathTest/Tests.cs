@@ -36,4 +36,19 @@ public class Tests {
 
         Assert.That(type, Is.EqualTo(ExpressionType.Universe));
     }
+
+
+    [Test]
+    public void SimplificationOfConjunctionIsFalse() {
+
+        MathExpression expression = new ConjunctionExpression(
+            new InExpression(new VariableExpression("a"), new TypeExpression(ExpressionType.Boolean)),
+            new VariableExpression("a"),
+            new BooleanExpression(false)
+        );
+
+        MathExpression result = expression.Simplify();
+
+        Assert.That(result, Is.EqualTo(new BooleanExpression(false)));
+    }
 }

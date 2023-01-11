@@ -17,7 +17,7 @@ public sealed class Context {
 
     private Context(Dictionary<MathExpression, MathExpression> replacements,  Dictionary<MathExpression, ExpressionType> typeInfo) {
         this.replacements = new(replacements);
-        this.typeInfo = new(typeInfo);
+        this.typeInfo = new();
     }
 
 

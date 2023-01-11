@@ -37,13 +37,14 @@ public abstract class GroupExpression : MathExpression {
             children = result1;
         }
 
+        if(TryCompute(children, out MathExpression? result3) && result3 != null) {
+            return result3;
+        }
+
         if(TrySimplifyDown(children, context, out MathExpression? result2) && result2 != null) {
             return result2;
         }
 
-        if(TryCompute(children, out MathExpression? result3) && result3 != null) {
-            return result3;
-        }
         //TODO: DETERMINE SUB CONTEXT PROPERLY?
         //children
         IEnumerable<MathExpression> simplifiedChildren = children.Select(e => e.Simplify(CreateSubContext(context, children.Where(e2 => !e2.Equals(e)))));
@@ -57,16 +58,19 @@ public abstract class GroupExpression : MathExpression {
             simplifiedChildren = result4;
         }
 
-        if(TrySimplifyUp(simplifiedChildren, context, out MathExpression? result5) && result5 != null) {
-            return result5;
-        }
-
         if(TryCompute(simplifiedChildren, out MathExpression? result6) && result6 != null) {
             return result6;
         }
 
+        if(TrySimplifyUp(simplifiedChildren, context, out MathExpression? result5) && result5 != null) {
+            return result5;
+        }
+
         return CreateInstance(simplifiedChildren);
     }
+
+
+    //TODO: Restructure.
 
     public abstract bool Condition(IEnumerable<MathExpression> children, Context context);
 
@@ -80,6 +84,7 @@ public abstract class GroupExpression : MathExpression {
         context ??= new();
 
         //TODO: Check for the actual output, and determine which of the type are the smallest
+        //TODO: Maybe change to simply check for if expression in set is equal to true
 
         if(context.TryDetermineType(this, out ExpressionType type)) {
             return type;

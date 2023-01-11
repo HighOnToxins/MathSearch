@@ -20,6 +20,8 @@ public abstract class BinaryExpression : MathExpression{
         yield return RightChild;
     }
 
+    //TODO: Use a better method for creating expressions of different sizes.
+
     public override MathExpression Simplify(Context? context = null) {
         context ??= new();
 

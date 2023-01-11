@@ -40,6 +40,10 @@ public sealed class InExpression: BinaryExpression {
 
     public override bool TrySimplifyUp(in MathExpression simplifiedLeftChild, in MathExpression simplifiedRightChild, Context context, out MathExpression? result) {
 
+        //Check context for typeInfo or in equality with true or false
+
+        //TODO: Add SetBuilder extractor.
+
         if(simplifiedRightChild is SetExpression setExpression) {
             IEnumerable<MathExpression> children = setExpression.Children.Select(e => new EqualsExpression(LeftChild, e));
             result = new DisjunctionExpression(children);

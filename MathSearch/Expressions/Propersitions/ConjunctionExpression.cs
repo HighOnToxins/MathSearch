@@ -15,7 +15,7 @@ public class ConjunctionExpression: GroupExpression {
         Children = children;
     }
 
-    public override bool Condition(IEnumerable<MathExpression> children, Context context) { //TODO: DETERMINE SUB CONTEXT PROPERLY?
+    public override bool Condition(IEnumerable<MathExpression> children, Context context) { //TODO: FIX PLZ!
         return children.All(e => e.DetermineType(CreateSubContext(context, children.Where(e2 => !e2.Equals(e)))) == ExpressionType.Boolean);
     }
 
@@ -24,6 +24,19 @@ public class ConjunctionExpression: GroupExpression {
             .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
             .SelectMany(e => e.Extract<ConjunctionExpression>());
         return true;
+    }
+
+    public override bool TryCompute(in IEnumerable<MathExpression> children, out MathExpression? result) {
+        if(children.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
+            result = new BooleanExpression(false);
+            return true;
+        } else if(children.All(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
+            result = new BooleanExpression(true);
+            return true;
+        }
+
+        result = null;
+        return false;
     }
 
     public override bool TrySimplifyDown(in IEnumerable<MathExpression> children, Context context, out MathExpression? result) {
@@ -35,20 +48,6 @@ public class ConjunctionExpression: GroupExpression {
         result = null;
         return false;
     }
-
-    public override bool TryCompute(in IEnumerable<MathExpression> children, out MathExpression? result) {
-        if(children.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
-            result = new BooleanExpression(false);
-            return true;
-        }else if(children.All(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
-            result = new BooleanExpression(true);
-            return true;
-        }
-
-        result = null;
-        return false;
-    }
-
     public override bool TryDetermineType(in IEnumerable<ExpressionType> simplifiedChild, Context context, out ExpressionType result) {
         result = ExpressionType.Boolean;
         return true;
@@ -68,7 +67,6 @@ public class ConjunctionExpression: GroupExpression {
     }
 
     public override Context CreateSubContext(Context context, IEnumerable<MathExpression> expressions) {
-
         Context result = context.Clone();
 
         foreach(MathExpression expression in expressions) {
