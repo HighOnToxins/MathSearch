@@ -3,8 +3,9 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions.Sets;
 
-[Independent(MathType.Set)]
 public sealed class TypeExpression: AtomExpression<MathType> {
+    public override MathType Type => MathType.Set;
+
     public TypeExpression(MathType value) : base(value) {
     }
 

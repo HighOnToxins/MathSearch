@@ -14,7 +14,7 @@ public sealed class SetExpression: GroupExpression {
         Children = children;
     }
 
-    public override MathType EvaluateType(IEnumerable<MathType> simplifiedChild, Context context) =>
+    public override MathType ComputeType(IEnumerable<MathType> simplifiedChild, Context context) =>
         MathType.Set;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>

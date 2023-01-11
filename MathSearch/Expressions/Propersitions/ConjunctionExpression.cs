@@ -37,7 +37,7 @@ public class ConjunctionExpression: GroupExpression {
         return false;
     }
 
-    public override MathType EvaluateType(IEnumerable<MathType> simplifiedChild, Context context) =>
+    public override MathType ComputeType(IEnumerable<MathType> simplifiedChild, Context context) =>
         MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>

@@ -41,8 +41,7 @@ public sealed class DisjunctionExpression: GroupExpression {
         return false;
     }
 
-    public override MathType EvaluateType(IEnumerable<MathType> childTypes, Context context) =>
-        MathType.Boolean;
+    public override MathType ComputeType(IEnumerable<MathType> childTypes, Context context) => MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
         new DisjunctionExpression(children);

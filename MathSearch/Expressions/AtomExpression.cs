@@ -7,6 +7,8 @@ public abstract class AtomExpression: MathExpression {
 
     public override int ChildCount => 0;
 
+    public abstract MathType Type {get;}
+
     public IConvertible Value { get; private init; }
 
     public AtomExpression(IConvertible value) {
@@ -33,16 +35,8 @@ public abstract class AtomExpression: MathExpression {
     }
 
     public override MathType DetermineType(Context? context = null) {
-
-        //TODO: Combine types.
-
-        if(Attribute.GetCustomAttribute(GetType(), typeof(IndependentAttribute)) is IndependentAttribute attrib) {
-            return attrib.Type;
-        } else if(context != null){
-            return context.DetermineType(this);
-        } else {
-            return MathType.Universe;
-        }
+        context ??= new();
+        return Type.Intersect(context.DetermineType(this));
     }
 
     public override bool Equals(MathExpression? other) =>

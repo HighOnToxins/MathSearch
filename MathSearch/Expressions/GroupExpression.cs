@@ -54,21 +54,20 @@ public abstract class GroupExpression : MathExpression {
 
     public override MathType DetermineType(Context? context = null) {
         context ??= new();
+        return EvaluateType(context).Intersect(context.DetermineType(this));
+    }
 
-        //TODO: Create type structure.
-        //TODO: Check for the actual output, and determine which of the type are the smallest
-        //TODO: Maybe change to simply check for if expression in set is equal to true
-
+    public MathType EvaluateType(Context context) {
         if(Condition(Children, context)) {
-            return EvaluateType(
+            return ComputeType(
                 Children.Select(e => e.DetermineType(CreateSubContext(context, Children.Where(e2 => !e2.Equals(e))))),
                 context);
         } else {
-            return context.DetermineType(this);
+            return MathType.Universe;
         }
     }
 
-    public abstract MathType EvaluateType(IEnumerable<MathType> childTypes, Context context);
+    public abstract MathType ComputeType(IEnumerable<MathType> childTypes, Context context);
 
     protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren);
 
