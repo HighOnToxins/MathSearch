@@ -83,6 +83,7 @@ public abstract class GroupExpression : MathExpression {
     public override ExpressionType DetermineType(Context? context = null) {
         context ??= new();
 
+        //TODO: Create type structure.
         //TODO: Check for the actual output, and determine which of the type are the smallest
         //TODO: Maybe change to simply check for if expression in set is equal to true
 

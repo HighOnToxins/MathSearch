@@ -7,6 +7,8 @@ public enum ExpressionType {
     Universe,
 }
 
+//TODO: Remove attribute.
+
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class IndependentAttribute: Attribute {
 
