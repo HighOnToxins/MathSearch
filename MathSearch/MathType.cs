@@ -1,9 +1,9 @@
 ﻿namespace MathSearch.Expression;
 public enum MathType {
-    Nothing     = 0b_0000_0000_0000_0000_0000_0000_0000_0000,
-    Set         = 0b_0000_0000_0000_0000_0000_0000_0000_0001,
-    Boolean     = 0b_0000_0000_0000_0000_0000_0000_0000_0010,
-    Universe = Nothing | Set | Boolean,
+    Nothing     = 0b000,
+    Set         = 0b001,
+    Boolean     = 0b010,
+    Universe    = 0b111,
 }
 
 public static class UtilMathType {
