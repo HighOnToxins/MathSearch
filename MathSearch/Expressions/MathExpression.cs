@@ -1,4 +1,6 @@
 ﻿using MathSearch.Expression;
+using MathSearch.Expressions.Sets;
+using System.Linq.Expressions;
 
 namespace MathSearch.Expressions;
 
@@ -83,17 +85,31 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     public static int Compare(MathExpression expression1, MathExpression expression2) {
 
+        //compare values
         if(expression1 is AtomExpression atom1 && expression2 is AtomExpression atom2) {
             return (atom1.Value.ToString() ?? "").CompareTo(atom2.Value.ToString());
         }
 
-        if(expression1.GetType().IsEquivalentTo(expression2.GetType()) &&
-                expression1.ChildCount > 0 &&
-                expression2.ChildCount > 0) {
+        //compare precedence
+        if(!expression1.GetType().IsEquivalentTo(expression2.GetType())) {
+            int result = expression2.GetPrecedence() - expression1.GetPrecedence();
+            return result != 0 ? result : expression2.GetHashCode() - expression1.GetHashCode();
+        }
+
+        //compare children
+        if(expression1.ChildCount > 0 && expression2.ChildCount > 0) {
             return CompareChildrenOf(expression1, expression2);
         }
 
         return 0;
+    }
+
+    private int GetPrecedence() {
+        if(Attribute.GetCustomAttribute(GetType(), typeof(PrecedenceAttribute)) is PrecedenceAttribute attrib) {
+            return attrib.Value;
+        } else {
+            return GetHashCode();
+        }
     }
 
     private static int CompareChildrenOf(MathExpression operator1, MathExpression operator2) {
@@ -109,6 +125,6 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
             }
         }
 
-        return 0;
+        return operator2.ChildCount - operator1.ChildCount;
     }
 }

@@ -1,22 +1,20 @@
 ﻿
 using MathSearch.Expression;
+using System.Collections.Immutable;
 
 namespace MathSearch.Expressions.Propersitions;
 
+[Precedence(2)]
 public class ConjunctionExpression: OperatorExpression {
 
     public override IReadOnlySet<MathExpression> Children { get; }
 
     public ConjunctionExpression(params MathExpression[] children) {
-        Children = new HashSet<MathExpression>(children);
+        Children = children.ToImmutableSortedSet();
     }
 
     public ConjunctionExpression(IEnumerable<MathExpression> children) {
-        Children = new HashSet<MathExpression>(children);
-    }
-
-    public ConjunctionExpression(HashSet<MathExpression> children) {
-        Children = children;
+        Children = children.ToImmutableSortedSet();
     }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) {

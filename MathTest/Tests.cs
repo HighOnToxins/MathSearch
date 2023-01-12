@@ -110,4 +110,16 @@ public class Tests {
 
         Assert.That(result, Is.EqualTo(expected));
     }
+
+    [Test]
+    public void CheckDifferentlyOrderedConjunctionsAreEqual() {
+
+        MathExpression conjunction1 = new ConjunctionExpression(new VariableExpression("a"), new VariableExpression("b"));
+        MathExpression conjunction2 = new ConjunctionExpression(new VariableExpression("b"), new VariableExpression("a"));
+
+        bool result = conjunction1.Equals(conjunction2);
+
+        Assert.That(result, Is.EqualTo(true));
+    }
+
 }

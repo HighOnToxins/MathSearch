@@ -3,6 +3,7 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions.Basics;
 
+[Precedence(-1)]
 public sealed class EmptyExpression: MathExpression {
     public override int ChildCount => 0;
 

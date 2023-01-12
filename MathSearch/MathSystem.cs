@@ -26,6 +26,10 @@ public sealed class MathSystem : IEnumerable {
         this.expressions = new HashSet<MathExpression>(expressions);
     }
 
+    public MathSystem(MathSystem system) {
+        expressions = new HashSet<MathExpression>(system.Expressions);
+    }
+
     public void Add(MathExpression expression) {
         expressions.Add(expression);
     }
@@ -72,4 +76,23 @@ public sealed class MathSystem : IEnumerable {
     }
 
     IEnumerator IEnumerable.GetEnumerator() => expressions.GetEnumerator();
+
+    public bool EvaluateEquality(IEnumerable<MathExpression> children) {
+        throw new NotImplementedException();
+
+        //MathExpression comparer = children.First();
+        //bool allAreEqual = true;
+        //for(int i = 1; i < children.Count() && allAreEqual; i++) {
+        //    if(!) {
+        //        allAreEqual = false;
+        //    }
+        //}
+
+    }
+
+    public bool EvaluateEquality(params MathExpression[] children) => EvaluateEquality(children);
+
+    internal bool TryEvaluateEquality(IEnumerable<MathExpression> children, out bool result) {
+        throw new NotImplementedException();
+    }
 }
