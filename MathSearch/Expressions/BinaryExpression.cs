@@ -19,9 +19,9 @@ public abstract class BinaryExpression : OperatorExpression{
 
     public BinaryExpression(MathExpression leftChild, MathExpression rightChild) {
         MathExpression[] children = new MathExpression[ChildCount];
-        Children = children;
         SetLeftChild(children, leftChild);
         SetRightChild(children, rightChild);
+        Children = children;
     }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
@@ -34,15 +34,15 @@ public abstract class BinaryExpression : OperatorExpression{
     protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) =>
         TrySimplify(GetLeftChild(children), GetRightChild(children), context, out result);
 
-    protected abstract bool TrySimplify(MathExpression left, MathExpression right, MathSystem context, out MathExpression? result);
+    protected abstract bool TrySimplify(MathExpression leftChild, MathExpression rightChild, MathSystem context, out MathExpression? result);
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, MathSystem context) =>
-        ComputeType(GetLeftChild(childTypes), GetRightChild(childTypes), context);
+    protected override MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context) =>
+        ComputeType(GetLeftChild(children), GetRightChild(children), context);
 
     protected abstract MathType ComputeType(MathExpression leftChild, MathExpression rightChild, MathSystem context);
 
-    protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
-        CreateInstance(GetLeftChild(simplifiedChildren), GetRightChild(simplifiedChildren));
+    protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
+        CreateInstance(GetLeftChild(children), GetRightChild(children));
 
     protected abstract MathExpression CreateInstance(MathExpression leftChild, MathExpression rightChild);
 
