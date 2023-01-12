@@ -58,4 +58,19 @@ public sealed class EqualityTests {
         Assert.That(result, Is.EqualTo(expected));
     }
 
+    [Test]
+    public void SimplifiedExpressionReplacesNonsimplified() {
+
+        MathSystem system = new(){
+            new EqualsExpression(new VariableExpression("a"), new BooleanExpression(false))
+        };
+
+        MathExpression determinant = new VariableExpression("a");
+        MathExpression expected = new BooleanExpression(false);
+
+        MathExpression result = system.Determine(determinant);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
 }
