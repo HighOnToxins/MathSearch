@@ -1,8 +1,10 @@
 ﻿using MathSearch.Expression;
 using MathSearch.Expressions;
+using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions.Sets;
 using System.Collections;
+using System.Linq.Expressions;
 
 namespace MathSearch;
 
@@ -13,10 +15,6 @@ public sealed class MathSystem : IEnumerable {
     public IReadOnlySet<MathExpression> Expressions => expressions;
 
     public bool IsInconsistent { get => expressions.Contains(new BooleanExpression(false)); }
-
-    public int Count => throw new NotImplementedException();
-
-    public bool IsReadOnly => throw new NotImplementedException();
 
     public MathSystem(params MathExpression[] expressions) {
         this.expressions = new HashSet<MathExpression>(expressions);
@@ -45,12 +43,17 @@ public sealed class MathSystem : IEnumerable {
     }
 
     public MathExpression Simplify(MathExpression expression) {
+
         if(expressions.Contains(expression)) {
             return new BooleanExpression(true);
         }
 
-        NotExpression? not = expressions.OfType<NotExpression>().FirstOrDefault(e => e.Child.Equals(expression));
-        if(not != null) {
+        bool containsNot = expressions
+            .OfType<NotExpression>()
+            .Select(e => e.Child)
+            .Contains(expression);
+
+        if(containsNot) {
             return new BooleanExpression(false);
         }
 
@@ -59,6 +62,54 @@ public sealed class MathSystem : IEnumerable {
 
     public MathExpression Determine(MathExpression expression) {
         return Simplify(expression.Simplify(this));
+    }
+
+    public bool TryEvaluateEquality(IEnumerable<MathExpression> children, out bool result) {
+
+        if(children.Count() <= 1) {
+            result = true;
+            return true;
+        }
+
+        MathExpression comparer = children.First();
+        bool allAreEqual = true;
+        for(int i = 1; i < 0 & allAreEqual; i++) {
+            if(TryDetermineEquality(out bool equals, comparer, children.ElementAt(i)) && !equals) {
+                result = false;
+                return true;
+            }else if(!comparer.Equals(children.ElementAt(i))) {
+                allAreEqual = false;
+            }
+        }
+
+        result = default;
+        return false;
+    }
+
+    private bool TryDetermineEquality(out bool result, params MathExpression[] expressions) {
+
+        bool containsEquality = this.expressions
+            .OfType<EqualsExpression>()
+            .Any(e => expressions.All(e2 => e.Children.Contains(e2)));
+
+        if(containsEquality) {
+            result = true;
+            return true;
+        }
+
+        bool containsNotEquality = this.expressions
+            .OfType<NotExpression>()
+            .Select(e => e.Child)
+            .OfType<EqualsExpression>()
+            .Any(e => expressions.All(e2 => e.Children.Contains(e2)));
+
+        if(containsNotEquality) {
+            result = false;
+            return true;
+        }
+
+        result = default;
+        return false;
     }
 
     internal MathType EvaluateTypeOf(MathExpression expression) {
@@ -77,22 +128,4 @@ public sealed class MathSystem : IEnumerable {
 
     IEnumerator IEnumerable.GetEnumerator() => expressions.GetEnumerator();
 
-    public bool EvaluateEquality(IEnumerable<MathExpression> children) {
-        throw new NotImplementedException();
-
-        //MathExpression comparer = children.First();
-        //bool allAreEqual = true;
-        //for(int i = 1; i < children.Count() && allAreEqual; i++) {
-        //    if(!) {
-        //        allAreEqual = false;
-        //    }
-        //}
-
-    }
-
-    public bool EvaluateEquality(params MathExpression[] children) => EvaluateEquality(children);
-
-    internal bool TryEvaluateEquality(IEnumerable<MathExpression> children, out bool result) {
-        throw new NotImplementedException();
-    }
 }
