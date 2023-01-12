@@ -11,7 +11,7 @@ namespace MathTest;
 public sealed class EqualityTests {
 
     [Test]
-    public void DetermineVariablesAreEqualToThemselves() {
+    public void VariablesAreEqualToThemselves() {
         MathExpression determinant = new EqualsExpression(new VariableExpression("a"), new VariableExpression("a"));
         MathExpression expected = new BooleanExpression(true);
 
@@ -21,7 +21,7 @@ public sealed class EqualityTests {
     }
 
     [Test]
-    public void DeterminedThatUndefinedVariablesAreUnsimplifiable() {
+    public void UndefinedVariablesAreUnsimplifiable() {
         MathExpression determinant = new EqualsExpression(new VariableExpression("a"), new VariableExpression("b"));
         MathExpression expected = new EqualsExpression(new VariableExpression("a"), new VariableExpression("b"));
 
@@ -31,7 +31,7 @@ public sealed class EqualityTests {
     }
 
     [Test]
-    public void DetermineEqualityBasedOnContext() {
+    public void EqualitySimplifies() {
 
         MathSystem system = new(){
             new InExpression(new VariableExpression("a"), MathType.Boolean),

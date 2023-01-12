@@ -11,7 +11,7 @@ namespace MathTest;
 internal sealed class SetTests {
 
     [Test]
-    public void CheckDifferentlyOrderedSetsAreEqual() {
+    public void DifferentlyOrderedSetsAreEqual() {
 
         MathExpression set1 = new SetExpression(new VariableExpression("a"), new VariableExpression("b"));
         MathExpression set2 = new SetExpression(new VariableExpression("b"), new VariableExpression("a"));
@@ -27,7 +27,7 @@ internal sealed class SetTests {
     }
 
     [Test]
-    public void CheckIfInSetBecomesEqualities() {
+    public void InSetBecomesEqualities() {
 
         MathExpression expression = new InExpression(
             new VariableExpression("a"), 

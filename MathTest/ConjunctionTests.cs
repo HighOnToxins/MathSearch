@@ -10,7 +10,7 @@ namespace MathTest;
 public class ConjunctionTests {
 
     [Test]
-    public void DetermineAAndAIsA() {
+    public void AAndAIsA() {
 
         MathSystem system = new(){
             new InExpression(new VariableExpression("a"), MathType.Boolean),
@@ -63,7 +63,7 @@ public class ConjunctionTests {
 
 
     [Test]
-    public void SimplificationOfConjunctionIsFalse() {
+    public void ConjunctionSimplifiesToFalse() {
 
         MathExpression expression = new ConjunctionExpression(
             new BooleanExpression(false)
@@ -75,7 +75,7 @@ public class ConjunctionTests {
     }
 
     [Test]
-    public void CheckUnsimplifyableConjunctionWorks() {
+    public void ConjunctionDoesNotSimplify() {
 
         MathExpression expression = new ConjunctionExpression(
             new ConjunctionExpression(
@@ -105,7 +105,7 @@ public class ConjunctionTests {
     }
 
     [Test]
-    public void CheckSimplifyableConjunction() {
+    public void ConjunctionSimplifies() {
         MathSystem system = new(){
             new InExpression(new VariableExpression("a"), MathType.Boolean),
             new InExpression(new VariableExpression("b"), MathType.Boolean),
@@ -132,7 +132,7 @@ public class ConjunctionTests {
     }
 
     [Test]
-    public void CheckDifferentlyOrderedConjunctionsAreEqual() {
+    public void DifferentlyOrderedConjunctionsAreEqual() {
 
         MathSystem system = new(){
             new InExpression(new VariableExpression("a"), MathType.Boolean),
