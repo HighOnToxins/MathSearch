@@ -58,7 +58,7 @@ public sealed class Context {
 
     internal Context CreateSubContext(MathExpression e) {
         return new Context(currentLayerContext
-            .Except(new MathExpression[] { e }) //Except does not work for Noted exceptions.
+            .Except(new MathExpression[] { e }) //TODO: FIX: Except does not work for Noted exceptions.
             .Concat(expressions));
     }
 }
