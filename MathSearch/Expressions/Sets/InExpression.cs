@@ -8,6 +8,9 @@ public sealed class InExpression: BinaryExpression {
     public InExpression(MathExpression leftChild, MathExpression rightChild) : base(leftChild, rightChild) {
     }
 
+    public InExpression(MathExpression leftChild, MathType type) : base(leftChild, new TypeExpression(type)) {
+    }
+
     protected override bool Condition(MathExpression leftChild, MathExpression rightChild, MathSystem context) =>
         rightChild.DetermineType(context) == MathType.Set;
 

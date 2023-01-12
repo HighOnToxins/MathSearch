@@ -33,8 +33,9 @@ public class Tests {
     public void DetermineEqualityBasedOnContext() {
 
         MathSystem system = new(){
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("a"), MathType.Boolean),
+            new InExpression(new VariableExpression("b"), MathType.Boolean),
+            new InExpression(new VariableExpression("c"), MathType.Boolean),
         };
 
         MathExpression determinant = new ConjunctionExpression(
@@ -45,7 +46,11 @@ public class Tests {
             new VariableExpression("c")
         );
 
-        MathExpression expected = new BooleanExpression(true);
+        MathExpression expected = new ConjunctionExpression(
+            new VariableExpression("a"),
+            new VariableExpression("b"),
+            new VariableExpression("c")
+        );
 
         MathExpression result = system.Determine(determinant);
 

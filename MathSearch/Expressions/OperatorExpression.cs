@@ -22,37 +22,21 @@ public abstract class OperatorExpression : MathExpression {
 
     public override MathExpression Simplify(MathSystem? context = null) {
         context ??= new();
-        return context.Simplify(EvaluateSimplification(context));
+        return context.Simplify(GetSimplification(context));
     }
 
-    private MathExpression EvaluateSimplification(MathSystem context) {
+    private MathExpression GetSimplification(MathSystem context) {
 
         IEnumerable<MathExpression> children = this.children;
 
-        if(ConditionIsMet(children, context)) {
-            children = SimplifyChildren(children);
-
-            if(TrySimplify(children, context, out MathExpression? resultDown) && resultDown != null) {
-                return resultDown;
-            }
+        if(TryEvaluateSimplification(ref children, out MathExpression? resultDown, context) && resultDown != null) {
+            return resultDown;
         }
 
-        //children = children.Select((e, i) => e.Simplify(GetContextForChild(i, children, context)));
+        children = SimplifyChildren(children, context);
 
-        List<MathExpression> result = new();
-        int i = 0;
-        foreach(MathExpression child in children) {
-            result.Add(child.Simplify(GetContextForChild(i, children, context)));
-            i++;
-        }
-        children = result;
-
-        if(ConditionIsMet(children, context)) {
-            children = SimplifyChildren(children);
-
-            if(TrySimplify(children, context, out MathExpression? resultUp) && resultUp != null) {
-                return resultUp;
-            }
+        if(TryEvaluateSimplification(ref children, out MathExpression? resultUp, context) && resultUp != null) {
+            return resultUp;
         }
 
         if(!children.Any() || children.Contains(new EmptyExpression())) {
@@ -60,6 +44,28 @@ public abstract class OperatorExpression : MathExpression {
         } else {
             return CreateInstance(children);
         }
+    }
+
+    private IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children, MathSystem context) {
+        List<MathExpression> result = children.ToList();
+        for(int i = 0; i < result.Count; i++) {
+            result[i] = result[i].Simplify(GetContextForChild(i, result, context));
+        }
+        return result;
+    }
+
+    private bool TryEvaluateSimplification(ref IEnumerable<MathExpression> children, out MathExpression? result, MathSystem context) {
+        if(ConditionIsMet(children, context)) {
+            children = SimplifyChildren(children);
+
+            if(TrySimplify(children, context, out MathExpression? resultDown) && resultDown != null) {
+                result = resultDown;
+                return true;
+            }
+        }
+
+        result = null;
+        return false;
     }
 
     protected abstract IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children);

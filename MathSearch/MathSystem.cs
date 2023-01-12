@@ -44,6 +44,8 @@ public sealed class MathSystem : IEnumerable {
 
     public MathExpression Simplify(MathExpression expression) {
 
+        //TODO: Add replacement towards atoms that are deemed simpler. (Maybe create an attribute?)
+
         if(expressions.Contains(expression)) {
             return new BooleanExpression(true);
         }
@@ -73,17 +75,18 @@ public sealed class MathSystem : IEnumerable {
 
         MathExpression comparer = children.First();
         bool allAreEqual = true;
-        for(int i = 1; i < 0 & allAreEqual; i++) {
+        for(int i = 1; i < children.Count() & allAreEqual; i++) {
             if(TryDetermineEquality(out bool equals, comparer, children.ElementAt(i)) && !equals) {
                 result = false;
                 return true;
             }else if(!comparer.Equals(children.ElementAt(i))) {
-                allAreEqual = false;
+                result = default;
+                return false;
             }
         }
 
-        result = default;
-        return false;
+        result = true;
+        return true;
     }
 
     private bool TryDetermineEquality(out bool result, params MathExpression[] expressions) {
