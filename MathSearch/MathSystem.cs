@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace MathSearch;
 
-public sealed class MathSystem : IEnumerable<MathExpression>{
+public sealed class MathSystem : IEnumerable {
 
     private HashSet<MathExpression> expressions;
 
@@ -70,8 +70,6 @@ public sealed class MathSystem : IEnumerable<MathExpression>{
 
         return type;
     }
-
-    public IEnumerator<MathExpression> GetEnumerator() => expressions.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => expressions.GetEnumerator();
 }
