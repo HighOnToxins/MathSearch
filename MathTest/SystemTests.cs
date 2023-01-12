@@ -36,4 +36,38 @@ public sealed class SystemTests {
 
     }
 
+    [Test]
+    public void SystemRemovesTrue() {
+
+        MathSystem system = new() {
+            new BooleanExpression(true)
+        };
+
+        HashSet<MathExpression> expect = new() {
+        };
+
+        system.Simplify();
+
+        Assert.That(system.Expressions, Is.EqualTo(expect));
+
+    }
+
+    [Test]
+    public void CheckInconsistencyWorks() {
+
+        MathSystem system = new() {
+            new ConjunctionExpression(
+                new VariableExpression("a"),
+                new NotExpression(new VariableExpression("a"))
+            )
+        };
+
+        bool expect = true;
+
+        system.Simplify();
+
+        Assert.That(system.IsInconsistent, Is.EqualTo(expect));
+
+    }
+
 }
