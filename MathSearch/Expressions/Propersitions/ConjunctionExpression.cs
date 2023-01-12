@@ -7,22 +7,16 @@ namespace MathSearch.Expressions.Propersitions;
 [Precedence(2)]
 public class ConjunctionExpression: OperatorExpression {
 
-    public override IReadOnlySet<MathExpression> Children { get; }
+    public ConjunctionExpression(params MathExpression[] children) : base(children) { }
 
-    public ConjunctionExpression(params MathExpression[] children) {
-        Children = children.ToImmutableSortedSet();
-    }
+    public ConjunctionExpression(IEnumerable<MathExpression> children) : base(children) { }
 
-    public ConjunctionExpression(IEnumerable<MathExpression> children) {
-        Children = children.ToImmutableSortedSet();
-    }
-
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) {
-        return children.All(e => MathType.Boolean.Contains(e, context));
-    }
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
+        children.All(e => MathType.Boolean.Contains(e, context));
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
         children
+            .OrderBy(e => e)
             .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
             .SelectMany(e => e.Extract<ConjunctionExpression>());
 

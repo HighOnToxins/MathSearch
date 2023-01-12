@@ -6,16 +6,16 @@ namespace MathSearch.Expressions;
 
 public abstract class OperatorExpression : MathExpression {
 
-    public virtual IReadOnlyCollection<MathExpression> Children { get;}
+    public IReadOnlyList<MathExpression> Children { get;}
 
     public override int ChildCount => Children.Count;
 
-    public OperatorExpression(IReadOnlyCollection<MathExpression> children) {
-        Children = children;
+    public OperatorExpression(IEnumerable<MathExpression> children) {
+        Children = new List<MathExpression>(children);
     }
 
-    public OperatorExpression() {
-        Children = Array.Empty<MathExpression>();
+    public OperatorExpression(params MathExpression[] children) {
+        Children = children;
     }
 
     public override IEnumerable<MathExpression> GetChildren() => Children;

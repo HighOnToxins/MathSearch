@@ -6,10 +6,6 @@ public abstract class BinaryExpression : OperatorExpression{
 
     private static T GetLeftChild<T>(IEnumerable<T> children) => children.First();
     private static T GetRightChild<T>(IEnumerable<T> children) => children.ElementAt(1);
-    private static void SetLeftChild<T>(T[] children, T expression) { children[0] = expression; }
-    private static void SetRightChild<T>(T[] children, T expression) { children[1] = expression; }
-
-    public override IReadOnlyList<MathExpression> Children { get; }
 
     public MathExpression LeftChild { get => GetLeftChild(Children); }
 
@@ -17,12 +13,7 @@ public abstract class BinaryExpression : OperatorExpression{
 
     public override int ChildCount => 2;
 
-    public BinaryExpression(MathExpression leftChild, MathExpression rightChild) {
-        MathExpression[] children = new MathExpression[ChildCount];
-        SetLeftChild(children, leftChild);
-        SetRightChild(children, rightChild);
-        Children = children;
-    }
+    public BinaryExpression(MathExpression leftChild, MathExpression rightChild) : base(leftChild, rightChild) { }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
         Condition(GetLeftChild(children), GetRightChild(children), context);

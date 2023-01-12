@@ -7,22 +7,16 @@ namespace MathSearch.Expressions.Propersitions;
 [Precedence(3)]
 public sealed class DisjunctionExpression: OperatorExpression {
 
-    public override IReadOnlySet<MathExpression> Children { get; }
+    public DisjunctionExpression(params MathExpression[] children) : base(children) { }
 
-    public DisjunctionExpression(params MathExpression[] children) {
-        Children = children.ToImmutableSortedSet();
-    }
+    public DisjunctionExpression(IEnumerable<MathExpression> children) : base(children) { }
 
-    public DisjunctionExpression(IEnumerable<MathExpression> children) {
-        Children = children.ToImmutableSortedSet();
-    }
-
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) {
-        return children.All(e => MathType.Boolean.Contains(e, context));
-    }
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) => 
+        children.All(e => MathType.Boolean.Contains(e, context));
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
         children
+            .OrderBy(e => e)
             .Where(e => e is not BooleanExpression booleanExpression || booleanExpression.Value)
             .SelectMany(e => e.Extract<DisjunctionExpression>());
 

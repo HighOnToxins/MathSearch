@@ -2,16 +2,11 @@
 
 namespace MathSearch.Expressions;
 
-public abstract class TernaryExpression : OperatorExpression{
+public abstract class TernaryExpression: OperatorExpression {
 
     private static T GetLeftChild<T>(IEnumerable<T> children) => children.First();
     private static T GetMiddleChild<T>(IEnumerable<T> children) => children.ElementAt(1);
     private static T GetRightChild<T>(IEnumerable<T> children) => children.ElementAt(2);
-    private static void SetLeftChild<T>(T[] children, T expression) { children[0] = expression; }
-    private static void SetMiddleChild<T>(T[] children, T expression) { children[1] = expression; }
-    private static void SetRightChild<T>(T[] children, T expression) { children[2] = expression; }
-
-    public override IReadOnlyList<MathExpression> Children { get; }
 
     public MathExpression LeftChild { get => GetLeftChild(Children); }
 
@@ -21,13 +16,7 @@ public abstract class TernaryExpression : OperatorExpression{
 
     public override int ChildCount => 3;
 
-    public TernaryExpression(MathExpression leftChild, MathExpression middleChild, MathExpression rightChild) {
-        MathExpression[] children = new MathExpression[ChildCount];
-        Children = children;
-        SetLeftChild(children, leftChild);
-        SetMiddleChild(children, middleChild);
-        SetRightChild(children, rightChild);
-    }
+    public TernaryExpression(MathExpression leftChild, MathExpression middleChild, MathExpression rightChild) : base(leftChild, middleChild, rightChild) { }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
         Condition(GetLeftChild(children), GetMiddleChild(children), GetRightChild(children), context);

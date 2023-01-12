@@ -1,22 +1,15 @@
 ﻿
 using MathSearch.Expression;
 using MathSearch.Expressions.Propersitions;
-using System.Collections.Immutable;
 
 namespace MathSearch.Expressions.Basics;
 
 [Precedence(6)]
 public sealed class EqualsExpression: OperatorExpression {
 
-    public override IReadOnlySet<MathExpression> Children { get; }
+    public EqualsExpression(params MathExpression[] children) : base(children.OrderBy(e => e)) { }
 
-    public EqualsExpression(params MathExpression[] children) {
-        Children = children.ToImmutableSortedSet();
-    }
-
-    public EqualsExpression(IEnumerable<MathExpression> children) {
-        Children = children.ToImmutableSortedSet();
-    }
+    public EqualsExpression(IEnumerable<MathExpression> children) : base(children.OrderBy(e => e)){ }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) => true;
 
@@ -25,7 +18,7 @@ public sealed class EqualsExpression: OperatorExpression {
     protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
 
         if(children.Count() == 1) {
-            result = new BooleanExpression(true); //?? things got removed, because it is a hash set ??
+            result = new BooleanExpression(true); //TODO: FIX: ?? things got removed, because it is a hash set ??
             return true;
         } else if(context.TryEvaluateEquality(children, out bool equalityResult)) {
             result = new BooleanExpression(equalityResult);
@@ -35,7 +28,7 @@ public sealed class EqualsExpression: OperatorExpression {
             return false;
         }
 
-        result = null;
+        result = null; 
         return false;
     }
 

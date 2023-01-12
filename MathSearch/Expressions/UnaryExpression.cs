@@ -6,19 +6,12 @@ namespace MathSearch.Expressions;
 public abstract class UnaryExpression : OperatorExpression {
 
     private static T GetChild<T>(IEnumerable<T> children) => children.First();
-    private static void SetChild<T>(T[] children, T expression) { children[0] = expression; }
-
-    public override IReadOnlyList<MathExpression> Children { get; }
 
     public MathExpression Child { get => GetChild(Children); }
 
     public override int ChildCount => 1;
 
-    public UnaryExpression(MathExpression child) {
-        MathExpression[] children = new MathExpression[ChildCount];
-        Children = children;
-        SetChild(children, child);
-    }
+    public UnaryExpression(MathExpression child): base(child) {}
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
         Condition(GetChild(children), context);
