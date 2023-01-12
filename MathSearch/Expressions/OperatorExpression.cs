@@ -6,19 +6,19 @@ namespace MathSearch.Expressions;
 
 public abstract class OperatorExpression : MathExpression {
 
-    public IReadOnlyList<MathExpression> Children { get;}
+    protected readonly IReadOnlyList<MathExpression> children;
 
-    public override int ChildCount => Children.Count;
+    public override int ChildCount => children.Count;
 
     public OperatorExpression(IEnumerable<MathExpression> children) {
-        Children = new List<MathExpression>(children);
+        this.children = new List<MathExpression>(children);
     }
 
     public OperatorExpression(params MathExpression[] children) {
-        Children = children;
+        this.children = children;
     }
 
-    public override IEnumerable<MathExpression> GetChildren() => Children;
+    public override IEnumerable<MathExpression> GetChildren() => children;
 
     public override MathExpression Simplify(MathSystem? context = null) {
         context ??= new();
@@ -27,7 +27,7 @@ public abstract class OperatorExpression : MathExpression {
 
     private MathExpression EvaluateSimplification(MathSystem context) {
 
-        IEnumerable<MathExpression> children = Children;
+        IEnumerable<MathExpression> children = this.children;
 
         if(ConditionIsMet(children, context)) {
             children = SimplifyChildren(children);
@@ -74,8 +74,8 @@ public abstract class OperatorExpression : MathExpression {
     }
 
     protected MathType EvaluateType(MathSystem context) {
-        if(ConditionIsMet(Children, context)) {
-            return ComputeType(Children, context);
+        if(ConditionIsMet(children, context)) {
+            return ComputeType(children, context);
         } else {
             return MathType.Universe;
         }
@@ -85,5 +85,5 @@ public abstract class OperatorExpression : MathExpression {
 
     protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> children);
 
-    public override MathExpression Clone() => CreateInstance(Children.Select(e => e.Clone()));
+    public override MathExpression Clone() => CreateInstance(children.Select(e => e.Clone()));
 }

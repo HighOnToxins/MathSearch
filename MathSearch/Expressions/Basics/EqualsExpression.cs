@@ -7,6 +7,8 @@ namespace MathSearch.Expressions.Basics;
 [Precedence(6)]
 public sealed class EqualsExpression: OperatorExpression {
 
+    public IReadOnlyList<MathExpression> Children => children;
+
     public EqualsExpression(params MathExpression[] children) : base(children.OrderBy(e => e)) { }
 
     public EqualsExpression(IEnumerable<MathExpression> children) : base(children.OrderBy(e => e)){ }

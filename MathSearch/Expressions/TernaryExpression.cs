@@ -8,11 +8,11 @@ public abstract class TernaryExpression: OperatorExpression {
     private static T GetMiddleChild<T>(IEnumerable<T> children) => children.ElementAt(1);
     private static T GetRightChild<T>(IEnumerable<T> children) => children.ElementAt(2);
 
-    public MathExpression LeftChild { get => GetLeftChild(Children); }
+    public MathExpression LeftChild { get => GetLeftChild(children); }
 
-    public MathExpression MiddleChild { get => GetMiddleChild(Children); }
+    public MathExpression MiddleChild { get => GetMiddleChild(children); }
 
-    public MathExpression RightChild { get => GetRightChild(Children); }
+    public MathExpression RightChild { get => GetRightChild(children); }
 
     public override int ChildCount => 3;
 

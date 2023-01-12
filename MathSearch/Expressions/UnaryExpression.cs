@@ -1,5 +1,4 @@
 ﻿using MathSearch.Expression;
-using MathSearch.Expressions.Basics;
 
 namespace MathSearch.Expressions; 
 
@@ -7,7 +6,7 @@ public abstract class UnaryExpression : OperatorExpression {
 
     private static T GetChild<T>(IEnumerable<T> children) => children.First();
 
-    public MathExpression Child { get => GetChild(Children); }
+    public MathExpression Child { get => GetChild(children); }
 
     public override int ChildCount => 1;
 

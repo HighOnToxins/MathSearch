@@ -7,6 +7,8 @@ namespace MathSearch.Expressions.Propersitions;
 [Precedence(3)]
 public sealed class DisjunctionExpression: OperatorExpression {
 
+    public IReadOnlyList<MathExpression> Children => children;
+
     public DisjunctionExpression(params MathExpression[] children) : base(children) { }
 
     public DisjunctionExpression(IEnumerable<MathExpression> children) : base(children) { }

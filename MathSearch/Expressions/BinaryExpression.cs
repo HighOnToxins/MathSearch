@@ -7,9 +7,9 @@ public abstract class BinaryExpression : OperatorExpression{
     private static T GetLeftChild<T>(IEnumerable<T> children) => children.First();
     private static T GetRightChild<T>(IEnumerable<T> children) => children.ElementAt(1);
 
-    public MathExpression LeftChild { get => GetLeftChild(Children); }
+    public MathExpression LeftChild { get => GetLeftChild(children); }
 
-    public MathExpression RightChild { get => GetRightChild(Children); }
+    public MathExpression RightChild { get => GetRightChild(children); }
 
     public override int ChildCount => 2;
 

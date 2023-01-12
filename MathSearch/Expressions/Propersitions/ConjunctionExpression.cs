@@ -7,6 +7,8 @@ namespace MathSearch.Expressions.Propersitions;
 [Precedence(2)]
 public class ConjunctionExpression: OperatorExpression {
 
+    public IReadOnlyList<MathExpression> Children => children;
+
     public ConjunctionExpression(params MathExpression[] children) : base(children) { }
 
     public ConjunctionExpression(IEnumerable<MathExpression> children) : base(children) { }
