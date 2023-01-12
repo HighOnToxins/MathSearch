@@ -1,12 +1,76 @@
 using MathSearch;
 using MathSearch.Expression;
 using MathSearch.Expressions;
+using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions.Sets;
 
 namespace MathTest;
 
 public class Tests {
+
+    [Test]
+    public void DetermineVariablesAreEqualToThemselves() {
+        MathExpression determinant = new EqualsExpression(new VariableExpression("a"), new VariableExpression("a"));
+        MathExpression expected = new BooleanExpression(true);
+
+        MathExpression result = determinant.Simplify();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void DeterminedThatUndefinedVariablesAreUnsimplifiable() {
+        MathExpression determinant = new EqualsExpression(new VariableExpression("a"), new VariableExpression("b"));
+        MathExpression expected = new EqualsExpression(new VariableExpression("a"), new VariableExpression("b"));
+
+        MathExpression result = determinant.Simplify();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void DetermineEqualityBasedOnContext() {
+
+        MathSystem system = new(){
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+        };
+
+        MathExpression determinant = new ConjunctionExpression(
+            new EqualsExpression(new VariableExpression("a"), new VariableExpression("b")),
+            new EqualsExpression(new VariableExpression("c"), new VariableExpression("b")),
+            new VariableExpression("a"),
+            new VariableExpression("b"),
+            new VariableExpression("c")
+        );
+
+        MathExpression expected = new BooleanExpression(true);
+
+        MathExpression result = system.Determine(determinant);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void DetermineAAndAIsA() {
+
+        MathSystem system = new(){
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+        };
+
+        MathExpression determinant = new ConjunctionExpression(
+            new VariableExpression("a"),
+            new VariableExpression("a")
+        );
+
+        MathExpression expected = new VariableExpression("a");
+
+        MathExpression result = system.Determine(determinant);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
 
     [Test]
     public void TypeOfConjunctionIsBoolean() {
