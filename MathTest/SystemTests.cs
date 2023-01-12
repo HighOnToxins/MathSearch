@@ -4,6 +4,7 @@ using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions;
 using MathSearch.Expression;
 using MathSearch.Expressions.Sets;
+using MathSearch.Expressions.Basics;
 
 namespace MathTest;
 
@@ -51,6 +52,23 @@ public sealed class SystemTests {
         Assert.That(system.Expressions, Is.EqualTo(expect));
 
     }
+
+    [Test]
+    public void SystemRemovesEmptyExpression() {
+
+        MathSystem system = new() {
+            new EmptyExpression()
+        };
+
+        HashSet<MathExpression> expect = new() {
+        };
+
+        system.Simplify();
+
+        Assert.That(system.Expressions, Is.EqualTo(expect));
+
+    }
+
 
     [Test]
     public void CheckInconsistencyWorks() {

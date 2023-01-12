@@ -4,6 +4,7 @@ using MathSearch.Expressions;
 using MathSearch.Expressions.Sets;
 using MathSearch.Expressions.Basics;
 using MathSearch.Expression;
+using MathSearch;
 
 namespace MathTest;
 
@@ -65,6 +66,18 @@ internal sealed class SetTests {
     public void EmptySimplifiesToNothing() {
 
         MathExpression expression = new SetExpression();
+        MathExpression expected = new TypeExpression(MathType.Nothing);
+
+        MathExpression result = expression.Simplify();
+
+        Assert.That(result, Is.EqualTo(expected));
+
+    }
+
+    [Test]
+    public void SetRemovesEmptyExpression() {
+
+        MathExpression expression = new SetExpression(new EmptyExpression());
         MathExpression expected = new TypeExpression(MathType.Nothing);
 
         MathExpression result = expression.Simplify();
