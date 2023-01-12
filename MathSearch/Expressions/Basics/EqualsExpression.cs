@@ -9,18 +9,18 @@ public sealed class EqualsExpression: OperatorExpression {
 
     public IReadOnlyList<MathExpression> Children => children;
 
-    public EqualsExpression(params MathExpression[] children) : base(children.OrderBy(e => e)) { }
+    public EqualsExpression(params MathExpression[] children) : base(children) { }
 
-    public EqualsExpression(IEnumerable<MathExpression> children) : base(children.OrderBy(e => e)){ }
+    public EqualsExpression(IEnumerable<MathExpression> children) : base(children){ }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) => true;
 
-    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
+    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children.OrderBy(e => e);
 
     protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
 
         if(children.Count() == 1) {
-            result = new BooleanExpression(true); //TODO: FIX: ?? things got removed, because it is a hash set ??
+            result = children.First(); 
             return true;
         } else if(context.TryEvaluateEquality(children, out bool equalityResult)) {
             result = new BooleanExpression(equalityResult);
