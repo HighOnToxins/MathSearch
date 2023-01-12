@@ -115,6 +115,7 @@ public sealed class MathSystem : IEnumerable {
         return false;
     }
 
+    //TODO: Define equalities of somthing beeing a type, to that thing also beeing of that type.
     internal MathType EvaluateTypeOf(MathExpression expression) {
         IEnumerable<MathType> types = expressions
             .OfType<InExpression>()

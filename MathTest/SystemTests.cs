@@ -74,10 +74,8 @@ public sealed class SystemTests {
     public void CheckInconsistencyWorks() {
 
         MathSystem system = new() {
-            new ConjunctionExpression(
-                new VariableExpression("a"),
-                new NotExpression(new VariableExpression("a"))
-            )
+            new VariableExpression("a"),
+            new NotExpression(new VariableExpression("a"))
         };
 
         bool expect = true;
