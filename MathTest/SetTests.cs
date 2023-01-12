@@ -3,6 +3,7 @@ using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions;
 using MathSearch.Expressions.Sets;
 using MathSearch.Expressions.Basics;
+using MathSearch.Expression;
 
 namespace MathTest;
 
@@ -41,6 +42,18 @@ internal sealed class SetTests {
             new EqualsExpression(new VariableExpression("a"), new VariableExpression("c")),
             new EqualsExpression(new VariableExpression("a"), new VariableExpression("d"))
         );
+
+        MathExpression result = expression.Simplify();
+
+        Assert.That(result, Is.EqualTo(expected));
+
+    }
+    
+    [Test]
+    public void InNothingIsFalse() {
+
+        MathExpression expression = new InExpression(new VariableExpression("a"), MathType.Nothing);
+        MathExpression expected = new BooleanExpression(false);
 
         MathExpression result = expression.Simplify();
 
