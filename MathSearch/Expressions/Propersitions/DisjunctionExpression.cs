@@ -28,11 +28,14 @@ public sealed class DisjunctionExpression: OperatorExpression {
             .Where(e => e is not BooleanExpression booleanExpression || booleanExpression.Value)
             .SelectMany(e => e.Extract<DisjunctionExpression>());
 
-    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
-        if(simplifiedChildren.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
+    protected override bool TrySimplify(IEnumerable<MathExpression> children, Context context, out MathExpression? result) {
+        if(children.Count() == 1) {
+            result = children.First();
+            return true;
+        }else if(children.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
             return true;
-        } else if(simplifiedChildren.Any(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
+        } else if(children.Any(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
             result = new BooleanExpression(true);
             return true;
         }
@@ -41,7 +44,7 @@ public sealed class DisjunctionExpression: OperatorExpression {
         return false;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) => MathType.Boolean;
+    protected override MathType ComputeType(IEnumerable<MathExpression> children, Context context) => MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new DisjunctionExpression(children);
 

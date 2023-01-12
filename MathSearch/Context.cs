@@ -56,9 +56,10 @@ public sealed class Context {
         currentLayerContext.AddRange(expressions); //TODO: Try to simplify to the children beeing added to the context
     }
 
-    internal Context CreateSubContext(MathExpression e) {
-        return new Context(currentLayerContext
-            .Except(new MathExpression[] { e }) //TODO: FIX: Except does not work for Noted exceptions.
-            .Concat(expressions));
+    internal Context CreateSubContext(int i) {
+        List<MathExpression> temp = new(currentLayerContext);
+        if(temp.Count > i) temp.RemoveAt(i);
+        temp.AddRange(expressions);
+        return new Context(temp);
     }
 }

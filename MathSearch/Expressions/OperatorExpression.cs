@@ -39,14 +39,13 @@ public abstract class OperatorExpression : MathExpression {
             context.AddContext(AddToContext(children));
         }
 
+        children = children.Select((e, i) => e.Simplify(context.CreateSubContext(i)));
 
-        //children = children.Select(e => e.Simplify(context.CreateSubContext(e)));
-
-        List<MathExpression> result = new();
-        foreach(MathExpression child in children) {
-            result.Add(child.Simplify(context.CreateSubContext(child)));
-        }
-        children = result;
+        //List<MathExpression> result = new();
+        //foreach(MathExpression child in children) {
+        //    result.Add(child.Simplify(context.CreateSubContext(child)));
+        //}
+        //children = result;
         
         if(ConditionIsMet(children, context)) {
             children = SimplifyChildren(children);

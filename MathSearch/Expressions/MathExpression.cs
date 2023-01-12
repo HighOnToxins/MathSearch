@@ -2,15 +2,15 @@
 
 namespace MathSearch.Expressions;
 
-public abstract class MathExpression : ICloneable, IComparable<MathExpression>, IEquatable<MathExpression> {
+public abstract class MathExpression: ICloneable, IComparable<MathExpression>, IEquatable<MathExpression> {
 
     public abstract int ChildCount { get; }
 
     public abstract IEnumerable<MathExpression> GetChildren();
-    
+
     public abstract MathExpression Simplify(Context? context = null);
 
-    public abstract MathType DetermineType(Context? context = null); 
+    public abstract MathType DetermineType(Context? context = null);
 
     public abstract MathExpression Clone();
 
