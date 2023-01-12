@@ -1,4 +1,7 @@
-﻿namespace MathSearch.Expression;
+﻿using MathSearch.Expressions;
+
+namespace MathSearch.Expression;
+
 public enum MathType {
     Nothing     = 0b000,
     Set         = 0b001,
@@ -7,12 +10,12 @@ public enum MathType {
 }
 
 public static class UtilMathType {
-    public static bool IsSubtypeOf(this MathType sub, MathType super) {
-        return sub.HasFlag(super);
+    public static bool IsSubTypeOf(this MathType sub, MathType super) {
+        return sub.Intersect(super) == sub;
     }
 
-    public static bool IsProperSubtypeOf(this MathType sub, MathType super) {
-        return sub != super && IsSubtypeOf(sub, super);
+    public static bool IsSuperTypeOf(this MathType super, MathType sub) {
+        return sub.Intersect(super) == sub;
     }
 
     public static MathType Intersect(this MathType type, MathType other) {
@@ -21,5 +24,9 @@ public static class UtilMathType {
 
     public static MathType Union(this MathType type, MathType other) {
         return type | other;
+    }
+
+    public static bool Contains(this MathType type, MathExpression expression, Context? context = null) {
+        return expression.DetermineType(context).IsSubTypeOf(type);
     }
 }

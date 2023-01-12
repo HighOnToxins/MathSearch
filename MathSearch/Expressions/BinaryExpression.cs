@@ -31,10 +31,10 @@ public abstract class BinaryExpression : OperatorExpression{
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
-    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) =>
-        TrySimplify(GetLeftChild(simplifiedChildren), GetRightChild(simplifiedChildren), context, out result);
+    protected override bool TrySimplify(IEnumerable<MathExpression> children, Context context, out MathExpression? result) =>
+        TrySimplify(GetLeftChild(children), GetRightChild(children), context, out result);
 
-    protected abstract bool TrySimplify(MathExpression simplifiedLeft, MathExpression simplifiedRight, Context context, out MathExpression? result);
+    protected abstract bool TrySimplify(MathExpression left, MathExpression right, Context context, out MathExpression? result);
 
     protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) =>
         ComputeType(GetLeftChild(childTypes), GetRightChild(childTypes), context);

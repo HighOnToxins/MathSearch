@@ -1,3 +1,4 @@
+using MathSearch;
 using MathSearch.Expression;
 using MathSearch.Expressions;
 using MathSearch.Expressions.Propersitions;

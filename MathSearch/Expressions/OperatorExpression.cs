@@ -29,8 +29,8 @@ public abstract class OperatorExpression : MathExpression {
 
         IEnumerable<MathExpression> children = Children;
 
-        if(ConditionIsMet(Children, context)) {
-            children = SimplifyChildren(Children);
+        if(ConditionIsMet(children, context)) {
+            children = SimplifyChildren(children);
 
             if(TrySimplify(children, context, out MathExpression? resultDown) && resultDown != null) {
                 return resultDown;
@@ -40,10 +40,16 @@ public abstract class OperatorExpression : MathExpression {
         }
 
 
-        children = children.Select(e => e.Simplify(context.CreateSubContext(e)));
+        //children = children.Select(e => e.Simplify(context.CreateSubContext(e)));
 
-        if(ConditionIsMet(Children, context)) {
-            children = SimplifyChildren(Children);
+        List<MathExpression> result = new();
+        foreach(MathExpression child in children) {
+            result.Add(child.Simplify(context.CreateSubContext(child)));
+        }
+        children = result;
+        
+        if(ConditionIsMet(children, context)) {
+            children = SimplifyChildren(children);
 
             if(TrySimplify(children, context, out MathExpression? resultUp) && resultUp != null) {
                 return resultUp;
@@ -61,7 +67,7 @@ public abstract class OperatorExpression : MathExpression {
 
     protected abstract bool ConditionIsMet(IEnumerable<MathExpression> children, Context context);
 
-    protected abstract bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result);
+    protected abstract bool TrySimplify(IEnumerable<MathExpression> children, Context context, out MathExpression? result);
 
     public override MathType DetermineType(Context? context = null) {
         context ??= new();

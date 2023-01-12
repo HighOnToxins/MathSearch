@@ -13,7 +13,7 @@ public sealed class Context {
 
     private readonly List<MathExpression> currentLayerContext;
 
-    //TODO: Cache sub contexts.
+    //TODO: Try to cache sub contexts.
 
     internal Context() {
         expressions = new();
@@ -28,6 +28,11 @@ public sealed class Context {
     internal MathExpression Simplify(MathExpression expression) {
         if(expressions.Contains(expression)) {
             return new BooleanExpression(true);
+        }
+
+        NotExpression? not = expressions.OfType<NotExpression>().FirstOrDefault(e => e.Child.Equals(expression));
+        if(not != null) {
+            return new BooleanExpression(false);
         }
 
         return expression;
@@ -48,12 +53,12 @@ public sealed class Context {
     }
 
     internal void AddContext(IEnumerable<MathExpression> expressions) {
-        currentLayerContext.AddRange(expressions);
+        currentLayerContext.AddRange(expressions); //TODO: Try to simplify to the children beeing added to the context
     }
 
     internal Context CreateSubContext(MathExpression e) {
         return new Context(currentLayerContext
-            .Except(new MathExpression[] { e })
+            .Except(new MathExpression[] { e }) //Except does not work for Noted exceptions.
             .Concat(expressions));
     }
 }

@@ -20,7 +20,7 @@ public class ConjunctionExpression: OperatorExpression {
     }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) {
-        return children.All(e => e.DetermineType(context) == MathType.Boolean);
+        return children.All(e => MathType.Boolean.Contains(e, context));
     }
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
@@ -32,20 +32,18 @@ public class ConjunctionExpression: OperatorExpression {
         if(simplifiedChildren.All(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
             result = new BooleanExpression(true);
             return true;
-        }else if(simplifiedChildren.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
+        } else if(simplifiedChildren.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
             return true;
-        } 
+        }
 
         result = null;
         return false;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) =>
-        MathType.Boolean;
+    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) => MathType.Boolean;
 
-    protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
-        new ConjunctionExpression(children);
+    protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new ConjunctionExpression(children);
 
     protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => children;
 }

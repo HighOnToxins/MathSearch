@@ -4,6 +4,8 @@ using MathSearch.Expressions.Propersitions;
 
 namespace MathSearch.Expressions;
 
+//TODO: Make not operatorExpression and add determine method.
+
 public sealed class MathSystem: OperatorExpression {
 
     public override IReadOnlySet<MathExpression> Children { get; }
@@ -22,9 +24,9 @@ public sealed class MathSystem: OperatorExpression {
         Children = children;
     }
 
-    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
-
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) => true;
+
+    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
     protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
         result = null;

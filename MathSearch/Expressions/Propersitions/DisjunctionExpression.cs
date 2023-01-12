@@ -20,12 +20,12 @@ public sealed class DisjunctionExpression: OperatorExpression {
     }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) {
-        return children.All(e => e.DetermineType(context) == MathType.Boolean);
+        return children.All(e => MathType.Boolean.Contains(e, context));
     }
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
         children
-            .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
+            .Where(e => e is not BooleanExpression booleanExpression || booleanExpression.Value)
             .SelectMany(e => e.Extract<DisjunctionExpression>());
 
     protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
@@ -43,8 +43,7 @@ public sealed class DisjunctionExpression: OperatorExpression {
 
     protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) => MathType.Boolean;
 
-    protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
-        new DisjunctionExpression(children);
+    protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new DisjunctionExpression(children);
 
-    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
+    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => children.Select(e => new NotExpression(e));
 }
