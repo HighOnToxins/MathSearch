@@ -19,7 +19,7 @@ public class ConjunctionExpression: OperatorExpression {
         Children = children;
     }
 
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) {
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) {
         return children.All(e => MathType.Boolean.Contains(e, context));
     }
 
@@ -28,7 +28,7 @@ public class ConjunctionExpression: OperatorExpression {
             .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
             .SelectMany(e => e.Extract<ConjunctionExpression>());
 
-    protected override bool TrySimplify(IEnumerable<MathExpression> children, Context context, out MathExpression? result) {
+    protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
         if(children.Count() == 1) {
             result = children.First();
             return true;
@@ -44,9 +44,9 @@ public class ConjunctionExpression: OperatorExpression {
         return false;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> children, Context context) => MathType.Boolean;
+    protected override MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context) => MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new ConjunctionExpression(children);
 
-    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => children;
+    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => children;
 }

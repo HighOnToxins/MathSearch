@@ -20,12 +20,12 @@ public abstract class OperatorExpression : MathExpression {
 
     public override IEnumerable<MathExpression> GetChildren() => Children;
 
-    public override MathExpression Simplify(Context? context = null) {
+    public override MathExpression Simplify(MathSystem? context = null) {
         context ??= new();
         return context.Simplify(EvaluateSimplification(context));
     }
 
-    private MathExpression EvaluateSimplification(Context context) {
+    private MathExpression EvaluateSimplification(MathSystem context) {
 
         IEnumerable<MathExpression> children = Children;
 
@@ -35,18 +35,18 @@ public abstract class OperatorExpression : MathExpression {
             if(TrySimplify(children, context, out MathExpression? resultDown) && resultDown != null) {
                 return resultDown;
             }
-
-            context.AddContext(AddToContext(children));
         }
 
-        children = children.Select((e, i) => e.Simplify(context.CreateSubContext(i)));
+        //children = children.Select((e, i) => e.Simplify(GetContextForChild(i, children, context)));
 
-        //List<MathExpression> result = new();
-        //foreach(MathExpression child in children) {
-        //    result.Add(child.Simplify(context.CreateSubContext(child)));
-        //}
-        //children = result;
-        
+        List<MathExpression> result = new();
+        int i = 0;
+        foreach(MathExpression child in children) {
+            result.Add(child.Simplify(GetContextForChild(i, children, context)));
+            i++;
+        }
+        children = result;
+
         if(ConditionIsMet(children, context)) {
             children = SimplifyChildren(children);
 
@@ -64,16 +64,16 @@ public abstract class OperatorExpression : MathExpression {
 
     protected abstract IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children);
 
-    protected abstract bool ConditionIsMet(IEnumerable<MathExpression> children, Context context);
+    protected abstract bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context);
 
-    protected abstract bool TrySimplify(IEnumerable<MathExpression> children, Context context, out MathExpression? result);
+    protected abstract bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result);
 
-    public override MathType DetermineType(Context? context = null) {
+    public override MathType DetermineType(MathSystem? context = null) {
         context ??= new();
-        return EvaluateType(context).Intersect(context.DetermineType(this));
+        return EvaluateType(context).Intersect(context.EvaluateTypeOf(this));
     }
 
-    protected MathType EvaluateType(Context context) {
+    protected MathType EvaluateType(MathSystem context) {
         if(ConditionIsMet(Children, context)) {
             return ComputeType(Children, context);
         } else {
@@ -81,7 +81,7 @@ public abstract class OperatorExpression : MathExpression {
         }
     }
 
-    protected abstract MathType ComputeType(IEnumerable<MathExpression> children, Context context);
+    protected abstract MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context);
 
     protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> children);
 

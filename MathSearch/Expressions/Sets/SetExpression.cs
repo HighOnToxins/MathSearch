@@ -14,19 +14,19 @@ public sealed class SetExpression: OperatorExpression {
         Children = children;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> simplifiedChild, Context context) =>
+    protected override MathType ComputeType(IEnumerable<MathExpression> simplifiedChild, MathSystem context) =>
         MathType.Set;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
         new SetExpression(Children);
 
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) {
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) {
         return false;
     }
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
-    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, Context context, out MathExpression? result) {
+    protected override bool TrySimplify(IEnumerable<MathExpression> simplifiedChildren, MathSystem context, out MathExpression? result) {
 
         //simplify empty to TypeExpression of nothing
 
@@ -34,5 +34,5 @@ public sealed class SetExpression: OperatorExpression {
         return false;
     }
 
-    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
+    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
 }

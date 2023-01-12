@@ -19,7 +19,7 @@ public abstract class AtomExpression: MathExpression {
         yield break;
     }
 
-    public override MathExpression Simplify(Context? context = null) {
+    public override MathExpression Simplify(MathSystem? context = null) {
         if(context != null) {
             return context.Simplify(this);
         } else {
@@ -27,12 +27,12 @@ public abstract class AtomExpression: MathExpression {
         }
     }
 
-    public override MathType DetermineType(Context? context = null) {
+    public override MathType DetermineType(MathSystem? context = null) {
         context ??= new();
-        return Type.Intersect(context.DetermineType(this));
+        return Type.Intersect(context.EvaluateTypeOf(this));
     }
 
-    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
+    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
 
     public override bool Equals(MathExpression? other) =>
         other is AtomExpression atomOther &&

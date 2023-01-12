@@ -8,15 +8,25 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     public abstract IEnumerable<MathExpression> GetChildren();
 
-    public abstract MathExpression Simplify(Context? context = null);
+    public abstract MathExpression Simplify(MathSystem? context = null);
 
-    public abstract MathType DetermineType(Context? context = null);
+    public abstract MathType DetermineType(MathSystem? context = null);
 
     public abstract MathExpression Clone();
 
     object ICloneable.Clone() => Clone();
 
-    protected abstract IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children);
+    public MathSystem? GetContextForChild(int index, IEnumerable<MathExpression>? children = null, MathSystem? context = null) {
+        if(children == null) children = GetChildren();
+
+        List<MathExpression> temp = AsContext(children).ToList();
+        if(temp.Count > 0) temp.RemoveAt(index);
+
+        context ??= new();
+        return new MathSystem(context) { temp };
+    }
+
+    protected abstract IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children);
 
     public IEnumerable<MathExpression> Extract<T>() where T : MathExpression{
         if(this is T) {

@@ -86,27 +86,28 @@ public class Tests {
 
     [Test]
     public void CheckSimplifyableConjunction() {
-        MathSystem system = new(
-            new DisjunctionExpression(
-                new ConjunctionExpression(
-                    new VariableExpression("a"),
-                    new VariableExpression("b")
-                ),
-                new VariableExpression("a"),
-                new ConjunctionExpression(
-                    new BooleanExpression(false),
-                    new BooleanExpression(true)
-                ),
-                new BooleanExpression(false)
-            ),
+        MathSystem system = new(){
             new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean))
+            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+        };
+
+        MathExpression determinant = new DisjunctionExpression(
+            new ConjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("b")
+            ),
+            new VariableExpression("a"),
+            new ConjunctionExpression(
+                new BooleanExpression(false),
+                new BooleanExpression(true)
+            ),
+            new BooleanExpression(false)
         );
 
         MathExpression expected = new VariableExpression("a");
 
-        MathSystem result = (MathSystem) system.Simplify();
+        MathExpression result = system.Determine(determinant);
 
-        Assert.That(result.Children.ElementAt(0), Is.EqualTo(expected));
+        Assert.That(result, Is.EqualTo(expected));
     }
 }

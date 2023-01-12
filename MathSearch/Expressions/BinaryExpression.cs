@@ -24,22 +24,22 @@ public abstract class BinaryExpression : OperatorExpression{
         SetRightChild(children, rightChild);
     }
 
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) =>
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
         Condition(GetLeftChild(children), GetRightChild(children), context);
 
-    protected abstract bool Condition(MathExpression leftChild, MathExpression rightChild, Context context);
+    protected abstract bool Condition(MathExpression leftChild, MathExpression rightChild, MathSystem context);
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
-    protected override bool TrySimplify(IEnumerable<MathExpression> children, Context context, out MathExpression? result) =>
+    protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) =>
         TrySimplify(GetLeftChild(children), GetRightChild(children), context, out result);
 
-    protected abstract bool TrySimplify(MathExpression left, MathExpression right, Context context, out MathExpression? result);
+    protected abstract bool TrySimplify(MathExpression left, MathExpression right, MathSystem context, out MathExpression? result);
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) =>
+    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, MathSystem context) =>
         ComputeType(GetLeftChild(childTypes), GetRightChild(childTypes), context);
 
-    protected abstract MathType ComputeType(MathExpression leftChild, MathExpression rightChild, Context context);
+    protected abstract MathType ComputeType(MathExpression leftChild, MathExpression rightChild, MathSystem context);
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> simplifiedChildren) =>
         CreateInstance(GetLeftChild(simplifiedChildren), GetRightChild(simplifiedChildren));

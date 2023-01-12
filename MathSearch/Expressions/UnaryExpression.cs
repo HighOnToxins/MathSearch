@@ -20,22 +20,22 @@ public abstract class UnaryExpression : OperatorExpression {
         SetChild(children, child);
     }
 
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, Context context) =>
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
         Condition(GetChild(children), context);
 
-    protected abstract bool Condition(MathExpression child, Context context);
+    protected abstract bool Condition(MathExpression child, MathSystem context);
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
-    protected override bool TrySimplify(IEnumerable<MathExpression> children, Context context, out MathExpression? result) =>
+    protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) =>
         TrySimplify(GetChild(children), context, out result);
 
-    protected abstract bool TrySimplify(MathExpression child, Context context, out MathExpression? result);
+    protected abstract bool TrySimplify(MathExpression child, MathSystem context, out MathExpression? result);
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, Context context) =>
+    protected override MathType ComputeType(IEnumerable<MathExpression> childTypes, MathSystem context) =>
         ComputeType(GetChild(childTypes), context);
 
-    protected abstract MathType ComputeType(MathExpression child, Context context);
+    protected abstract MathType ComputeType(MathExpression child, MathSystem context);
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) =>
         CreateInstance(GetChild(children));

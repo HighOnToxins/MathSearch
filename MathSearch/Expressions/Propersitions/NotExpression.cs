@@ -6,10 +6,10 @@ public class NotExpression: UnaryExpression {
     public NotExpression(MathExpression child) : base(child) {
     }
 
-    protected override bool Condition(MathExpression child, Context context) =>
+    protected override bool Condition(MathExpression child, MathSystem context) =>
         MathType.Boolean.Contains(child, context);
 
-    protected override bool TrySimplify(MathExpression child, Context context, out MathExpression? result) {
+    protected override bool TrySimplify(MathExpression child, MathSystem context, out MathExpression? result) {
 
         //Destribute on conjunction
 
@@ -22,9 +22,9 @@ public class NotExpression: UnaryExpression {
 
     }
 
-    protected override MathType ComputeType(MathExpression child, Context context) => MathType.Boolean;
+    protected override MathType ComputeType(MathExpression child, MathSystem context) => MathType.Boolean;
 
     protected override MathExpression CreateInstance(MathExpression child) => new NotExpression(child);
 
-    protected override IEnumerable<MathExpression> AddToContext(IEnumerable<MathExpression> children) { yield break; }
+    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) { yield break; }
 }

@@ -26,7 +26,7 @@ public static class UtilMathType {
         return type | other;
     }
 
-    public static bool Contains(this MathType type, MathExpression expression, Context? context = null) {
+    public static bool Contains(this MathType type, MathExpression expression, MathSystem? context = null) {
         return expression.DetermineType(context).IsSubTypeOf(type);
     }
 }
