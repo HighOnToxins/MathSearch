@@ -114,12 +114,22 @@ public class Tests {
     [Test]
     public void CheckDifferentlyOrderedConjunctionsAreEqual() {
 
+        MathSystem system = new(){
+            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+        };
+
         MathExpression conjunction1 = new ConjunctionExpression(new VariableExpression("a"), new VariableExpression("b"));
         MathExpression conjunction2 = new ConjunctionExpression(new VariableExpression("b"), new VariableExpression("a"));
 
-        bool result = conjunction1.Equals(conjunction2);
+        MathExpression determined1 = system.Determine(conjunction1);
+        MathExpression determined2 = system.Determine(conjunction2);
 
-        Assert.That(result, Is.EqualTo(true));
+        bool result1 = conjunction1.Equals(conjunction2);
+        bool result2 = determined1.Equals(determined2);
+
+        Assert.That(result1, Is.EqualTo(false));
+        Assert.That(result2, Is.EqualTo(true));
     }
 
 }
