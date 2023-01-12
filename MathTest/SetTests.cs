@@ -61,4 +61,15 @@ internal sealed class SetTests {
 
     }
 
+    [Test]
+    public void EmptySimplifiesToNothing() {
+
+        MathExpression expression = new SetExpression();
+        MathExpression expected = new TypeExpression(MathType.Nothing);
+
+        MathExpression result = expression.Simplify();
+
+        Assert.That(result, Is.EqualTo(expected));
+
+    }
 }
