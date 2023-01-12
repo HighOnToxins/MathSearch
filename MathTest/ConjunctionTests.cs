@@ -13,8 +13,8 @@ public class ConjunctionTests {
     public void DetermineAAndAIsA() {
 
         MathSystem system = new(){
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("a"), MathType.Boolean),
+            new InExpression(new VariableExpression("b"), MathType.Boolean),
         };
 
         MathExpression determinant = new ConjunctionExpression(
@@ -107,8 +107,8 @@ public class ConjunctionTests {
     [Test]
     public void CheckSimplifyableConjunction() {
         MathSystem system = new(){
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("a"), MathType.Boolean),
+            new InExpression(new VariableExpression("b"), MathType.Boolean),
         };
 
         MathExpression determinant = new DisjunctionExpression(
@@ -135,8 +135,8 @@ public class ConjunctionTests {
     public void CheckDifferentlyOrderedConjunctionsAreEqual() {
 
         MathSystem system = new(){
-            new InExpression(new VariableExpression("a"), new TypeExpression(MathType.Boolean)),
-            new InExpression(new VariableExpression("b"), new TypeExpression(MathType.Boolean)),
+            new InExpression(new VariableExpression("a"), MathType.Boolean),
+            new InExpression(new VariableExpression("b"), MathType.Boolean),
         };
 
         MathExpression conjunction1 = new ConjunctionExpression(new VariableExpression("a"), new VariableExpression("b"));
