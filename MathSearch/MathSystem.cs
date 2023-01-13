@@ -80,7 +80,7 @@ public sealed class MathSystem : IEnumerable {
 
 
     public bool TryEvaluateEquality(out bool result, params MathExpression[] expressions) =>
-        TryEvaluateEquality(out result, expressions);
+        TryEvaluateEquality(out result, expressions.AsEnumerable());
 
     public bool TryEvaluateEquality(out bool result, IEnumerable<MathExpression> expressions) {
 
