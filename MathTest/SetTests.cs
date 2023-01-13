@@ -27,21 +27,20 @@ internal sealed class SetTests {
     }
 
     [Test]
-    public void InSetBecomesEqualities() {
+    public void InSetSimplifiesToEqualities() {
 
         MathExpression expression = new InExpression(
-            new VariableExpression("a"), 
+            new VariableExpression("a"),
             new SetExpression(
                 new VariableExpression("b"),
                 new VariableExpression("c"),
                 new VariableExpression("d")
             )
         );
-
-        MathExpression expected = new ConjunctionExpression(
-            new EqualsExpression(new VariableExpression("a"), new VariableExpression("b")),
-            new EqualsExpression(new VariableExpression("a"), new VariableExpression("c")),
-            new EqualsExpression(new VariableExpression("a"), new VariableExpression("d"))
+        MathExpression expected = new DisjunctionExpression(
+                new EqualsExpression(new VariableExpression("a"), new VariableExpression("b")),
+                new EqualsExpression(new VariableExpression("a"), new VariableExpression("c")),
+                new EqualsExpression(new VariableExpression("a"), new VariableExpression("d"))
         );
 
         MathExpression result = expression.Simplify();
@@ -49,7 +48,8 @@ internal sealed class SetTests {
         Assert.That(result, Is.EqualTo(expected));
 
     }
-    
+
+
     [Test]
     public void InNothingIsFalse() {
 
@@ -85,29 +85,4 @@ internal sealed class SetTests {
         Assert.That(result, Is.EqualTo(expected));
 
     }
-
-
-    [Test]
-    public void SetSimplifiesToEqualities() {
-
-        MathExpression expression = new InExpression(
-            new VariableExpression("a"),
-            new SetExpression(
-                new VariableExpression("b"),
-                new VariableExpression("c"),
-                new VariableExpression("d")
-            )
-        ) ;
-        MathExpression expected = new DisjunctionExpression(
-                new EqualsExpression(new VariableExpression("a"), new VariableExpression("b")),
-                new EqualsExpression(new VariableExpression("a"), new VariableExpression("c")),
-                new EqualsExpression(new VariableExpression("a"), new VariableExpression("d"))
-        );
-
-        MathExpression result = expression.Simplify();
-
-        Assert.That(result, Is.EqualTo(expected));
-
-    }
-
 }

@@ -1,5 +1,6 @@
 ﻿
 using MathSearch.Expression;
+using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 
 namespace MathSearch.Expressions.Sets;
@@ -17,17 +18,14 @@ public sealed class InExpression: BinaryExpression {
     protected override bool TrySimplify(MathExpression leftChild, MathExpression rightChild, MathSystem context, out MathExpression? result) {
 
         if(rightChild is SetExpression setExpression) {
-            // Directly contains the expression or if it contains an equality of the expression.
-            if(setExpression.Children.Contains(leftChild) || context.GetEqualitiesOf(leftChild).Any(e => setExpression.Children.Contains(e))) {
-                result = new BooleanExpression(true);
-                return true;
-            }
 
-            // If both are simple then false can be determined.
-            if(leftChild.IsSimple() && setExpression.IsSimple()) {
-                result = new BooleanExpression(setExpression.Children.Contains(leftChild));
-                return true;
-            }
+            //simplifies to a dijunction of equals
+            IEnumerable<MathExpression> dijunctionChildren = setExpression.Children
+                .Select(e => new EqualsExpression(leftChild.Clone(), e));
+
+            result = new DisjunctionExpression(dijunctionChildren).Simplify(context);
+            return true;
+
         }else if(rightChild is TypeExpression typeExpression) {
 
             MathType type = context.DetermineTypeOf(leftChild);
