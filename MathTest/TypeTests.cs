@@ -57,8 +57,8 @@ public sealed class TypeTests {
     [Test]
     public void TypeImpliesEquality() {
 
-        MathExpression expression1 = new SetExpression();
-        MathExpression expression2 = new ConjunctionExpression();
+        MathExpression expression1 = new SetExpression(new VariableExpression("a"));
+        MathExpression expression2 = new ConjunctionExpression(new VariableExpression("a"));
 
         MathSystem system = new();
 
