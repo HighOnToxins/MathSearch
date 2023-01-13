@@ -78,20 +78,20 @@ public sealed class MathSystem : IEnumerable {
         return Simplify(expression.Simplify(this));
     }
 
-    public bool TryEvaluateEquality(IEnumerable<MathExpression> children, out bool result) {
+    public bool TryEvaluateEquality(out bool result, params MathExpression[] expressions) {
 
-        if(children.Count() <= 1) {
+        if(expressions.Count() <= 1) {
             result = true;
             return true;
         }
 
-        MathExpression comparer = children.First();
+        MathExpression comparer = expressions.First();
         bool allAreEqual = true;
-        for(int i = 1; i < children.Count() & allAreEqual; i++) {
-            if(TryDetermineEquality(out bool equals, comparer, children.ElementAt(i)) && !equals) {
+        for(int i = 1; i < expressions.Count() & allAreEqual; i++) {
+            if(TryDetermineEquality(out bool equals, comparer, expressions.ElementAt(i)) && !equals) {
                 result = false;
                 return true;
-            }else if(!comparer.Equals(children.ElementAt(i))) {
+            }else if(!comparer.Equals(expressions.ElementAt(i))) {
                 result = default;
                 return false;
             }
