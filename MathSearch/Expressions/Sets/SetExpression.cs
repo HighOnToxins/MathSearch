@@ -16,6 +16,13 @@ public sealed class SetExpression: OperatorExpression {
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children.ToImmutableSortedSet();
 
     protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
+
+        //Empty set simplifies to nothing type.
+        if(!children.Any()) {
+            result = new TypeExpression(MathType.Nothing);
+            return true;
+        }
+
         result = null;
         return false;
     }
