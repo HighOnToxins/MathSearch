@@ -76,7 +76,7 @@ public abstract class OperatorExpression: MathExpression {
 
     public override MathType DetermineType(MathSystem? context = null) {
         context ??= new();
-        return EvaluateType(context).Intersect(context.DetermineTypeOf(this));
+        return EvaluateType(context).IntersectWith(context.DetermineTypeOf(this));
     }
 
     protected MathType EvaluateType(MathSystem context) {

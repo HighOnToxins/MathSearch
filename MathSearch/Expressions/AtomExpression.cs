@@ -29,7 +29,7 @@ public abstract class AtomExpression: MathExpression {
 
     public override MathType DetermineType(MathSystem? context = null) {
         context ??= new();
-        return Type.Intersect(context.DetermineTypeOf(this));
+        return Type.IntersectWith(context.DetermineTypeOf(this));
     }
 
     protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
