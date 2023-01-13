@@ -17,10 +17,10 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
     object ICloneable.Clone() => Clone();
 
     public bool IsSimple() {
-        if(this is AtomExpression && Attribute.GetCustomAttribute(GetType(), typeof(SimpleAttribute)) != null) {
-            return true;
+        if(Attribute.GetCustomAttribute(GetType(), typeof(IsNotSimpleAttribute)) != null) {
+            return false;
         } else {
-            return ChildCount > 0 && GetChildren().All(e => e.IsSimple());
+            return GetChildren().All(e => e.IsSimple());
         }
     }
 

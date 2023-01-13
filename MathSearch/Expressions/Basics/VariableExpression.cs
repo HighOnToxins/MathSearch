@@ -4,6 +4,7 @@ using MathSearch.Expression;
 namespace MathSearch.Expressions;
 
 [Precedence(0)]
+[IsNotSimple]
 public sealed class VariableExpression: AtomExpression<string> {
     public override MathType Type => MathType.Universe;
 
