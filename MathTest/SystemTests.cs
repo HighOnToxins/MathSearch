@@ -105,7 +105,6 @@ public sealed class SystemTests {
 
     }
 
-
     [Test]
     public void CheckInconsistencyWorks() {
 
@@ -120,6 +119,35 @@ public sealed class SystemTests {
 
         Assert.That(system.IsInconsistent, Is.EqualTo(expect));
 
+    }
+
+    [Test]
+    public void ADoesNotDisapear() {
+
+        MathSystem system = new() {
+            new VariableExpression("a"),
+        };
+
+        MathExpression expect = new VariableExpression("a");
+
+        system.Simplify();
+
+        Assert.That(system.Expressions.First(), Is.EqualTo(expect));
+
+    }
+
+    [Test]
+    public void SystemRemoveAnyTrue() {
+
+        MathSystem system = new() {
+            new BooleanExpression(true),
+        };
+
+        bool expect = false;
+
+        system.Simplify();
+
+        Assert.That(system.Expressions.Any(), Is.EqualTo(expect));
     }
 
 }
