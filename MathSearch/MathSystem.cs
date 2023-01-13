@@ -4,6 +4,7 @@ using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions.Sets;
 using System.Collections;
+using System.Linq.Expressions;
 
 namespace MathSearch;
 
@@ -59,10 +60,7 @@ public sealed class MathSystem: IEnumerable {
         }
 
         //contains simplified equality
-        IEnumerable<MathExpression> replacement = expressions
-            .OfType<EqualsExpression>()
-            .Where(e => e.Children.Contains(expression))
-            .SelectMany(e => e.Children)
+        IEnumerable<MathExpression> replacement = GetEqualitiesOf(expression)
             .Where(e => e.IsSimple());
 
         if(replacement.Count() >= 1) {
@@ -72,6 +70,12 @@ public sealed class MathSystem: IEnumerable {
 
         return expression.Clone();
     }
+
+    public IEnumerable<MathExpression> GetEqualitiesOf(MathExpression expression) =>
+        expressions
+            .OfType<EqualsExpression>()
+            .Where(e => e.Children.Contains(expression))
+            .SelectMany(e => e.Children);
 
     public MathExpression Determine(MathExpression expression) {
         return Simplify(expression.Simplify(this));
@@ -138,7 +142,7 @@ public sealed class MathSystem: IEnumerable {
 
         MathType type = MathType.Universe;
         foreach(MathType t in types) {
-            type = type.Intersect(t);
+            type = type.IntersectWith(t);
         }
 
         return type;
