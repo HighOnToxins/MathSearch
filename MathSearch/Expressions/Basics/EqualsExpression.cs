@@ -30,6 +30,8 @@ public sealed class EqualsExpression: OperatorExpression {
             return false;
         }
 
+        //TODO: count conjunction equalities
+
         result = null; 
         return false;
     }

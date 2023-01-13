@@ -21,8 +21,6 @@ public sealed class InExpression: BinaryExpression {
             return true;
         }
 
-
-
         //TODO: Write simplification for in-operator.
 
         //Check context for typeInfo or in equality with true or false
