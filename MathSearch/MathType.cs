@@ -23,7 +23,7 @@ public static class UtilMathType {
     }
 
     public static bool Overlaps(this MathType type, MathType other) {
-        return type.IntersectWith(other) == MathType.Nothing;
+        return type.IntersectWith(other) != MathType.Nothing;
     }
 
     public static MathType IntersectWith(this MathType type, MathType other) {
