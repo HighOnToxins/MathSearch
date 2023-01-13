@@ -1,4 +1,5 @@
 ﻿using MathSearch.Expression;
+using MathSearch.Expressions.Basics;
 using System.Collections.Immutable;
 
 namespace MathSearch.Expressions.Sets;
@@ -13,7 +14,9 @@ public sealed class SetExpression: OperatorExpression {
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) => true;
 
-    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children.ToImmutableSortedSet();
+    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children
+        .Where(e => e is not EmptyExpression)
+        .ToImmutableSortedSet();
 
     protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
 
