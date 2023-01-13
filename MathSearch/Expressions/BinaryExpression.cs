@@ -2,7 +2,7 @@
 
 namespace MathSearch.Expressions;
 
-public abstract class BinaryExpression : OperatorExpression{
+public abstract class BinaryExpression: OperatorExpression {
 
     private static T GetLeftChild<T>(IEnumerable<T> children) => children.First();
     private static T GetRightChild<T>(IEnumerable<T> children) => children.ElementAt(1);

@@ -7,7 +7,7 @@ public abstract class AtomExpression: MathExpression {
 
     public override int ChildCount => 0;
 
-    public abstract MathType Type {get;}
+    public abstract MathType Type { get; }
 
     public IConvertible Value { get; private init; }
 

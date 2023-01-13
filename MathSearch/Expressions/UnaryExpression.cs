@@ -1,8 +1,8 @@
 ﻿using MathSearch.Expression;
 
-namespace MathSearch.Expressions; 
+namespace MathSearch.Expressions;
 
-public abstract class UnaryExpression : OperatorExpression {
+public abstract class UnaryExpression: OperatorExpression {
 
     private static T GetChild<T>(IEnumerable<T> children) => children.First();
 
@@ -10,7 +10,7 @@ public abstract class UnaryExpression : OperatorExpression {
 
     public override int ChildCount => 1;
 
-    public UnaryExpression(MathExpression child): base(child) {}
+    public UnaryExpression(MathExpression child) : base(child) { }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
         Condition(GetChild(children), context);

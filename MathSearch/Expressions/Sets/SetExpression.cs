@@ -7,7 +7,7 @@ public sealed class SetExpression: OperatorExpression {
 
     public IReadOnlyList<MathExpression> Children => children;
 
-    public SetExpression(params MathExpression[] children) : base(children){ }
+    public SetExpression(params MathExpression[] children) : base(children) { }
 
     public SetExpression(IEnumerable<MathExpression> children) : base(children) { }
 

@@ -1,6 +1,4 @@
 ﻿using MathSearch.Expression;
-using MathSearch.Expressions.Sets;
-using System.Linq.Expressions;
 
 namespace MathSearch.Expressions;
 
@@ -38,7 +36,7 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     protected abstract IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children);
 
-    public IEnumerable<MathExpression> Extract<T>() where T : MathExpression{
+    public IEnumerable<MathExpression> Extract<T>() where T : MathExpression {
         if(this is T) {
             return GetChildren().SelectMany(c => c.Extract<T>());
         } else {

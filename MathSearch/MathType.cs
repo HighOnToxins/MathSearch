@@ -3,10 +3,10 @@
 namespace MathSearch.Expression;
 
 public enum MathType {
-    Nothing     = 0b000,
-    Set         = 0b001,
-    Boolean     = 0b010,
-    Universe    = 0b111,
+    Nothing = 0b000,
+    Set = 0b001,
+    Boolean = 0b010,
+    Universe = 0b111,
 }
 
 public static class UtilMathType {

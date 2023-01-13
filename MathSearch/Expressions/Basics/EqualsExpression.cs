@@ -11,7 +11,7 @@ public sealed class EqualsExpression: OperatorExpression {
 
     public EqualsExpression(params MathExpression[] children) : base(children) { }
 
-    public EqualsExpression(IEnumerable<MathExpression> children) : base(children){ }
+    public EqualsExpression(IEnumerable<MathExpression> children) : base(children) { }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) => true;
 
@@ -20,7 +20,7 @@ public sealed class EqualsExpression: OperatorExpression {
     protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
 
         if(children.Count() == 1) {
-            result = children.First(); 
+            result = children.First();
             return true;
         } else if(context.TryEvaluateEquality(out bool equalityResult, children)) {
             result = new BooleanExpression(equalityResult);
@@ -30,7 +30,7 @@ public sealed class EqualsExpression: OperatorExpression {
             return false;
         }
 
-        result = null; 
+        result = null;
         return false;
     }
 

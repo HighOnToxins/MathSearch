@@ -13,7 +13,7 @@ public sealed class DisjunctionExpression: OperatorExpression {
 
     public DisjunctionExpression(IEnumerable<MathExpression> children) : base(children) { }
 
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) => 
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
         children.All(e => MathType.Boolean.Contains(e, context));
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
@@ -26,7 +26,7 @@ public sealed class DisjunctionExpression: OperatorExpression {
         if(children.Count() == 1) {
             result = children.First();
             return true;
-        }else if(children.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
+        } else if(children.All(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
             return true;
         } else if(children.Any(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {

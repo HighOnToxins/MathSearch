@@ -4,7 +4,7 @@ using MathSearch.Expressions.Basics;
 
 namespace MathSearch.Expressions;
 
-public abstract class OperatorExpression : MathExpression {
+public abstract class OperatorExpression: MathExpression {
 
     protected readonly IReadOnlyList<MathExpression> children;
 

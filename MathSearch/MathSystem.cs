@@ -4,11 +4,10 @@ using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions.Sets;
 using System.Collections;
-using System.Linq.Expressions;
 
 namespace MathSearch;
 
-public sealed class MathSystem : IEnumerable {
+public sealed class MathSystem: IEnumerable {
 
     private HashSet<MathExpression> expressions;
 
@@ -65,7 +64,7 @@ public sealed class MathSystem : IEnumerable {
             .Where(e => e.Children.Contains(expression))
             .SelectMany(e => e.Children)
             .Where(e => e.IsSimple());
-        
+
         if(replacement.Count() >= 1) {
             return replacement.First();
         }
@@ -95,7 +94,7 @@ public sealed class MathSystem : IEnumerable {
             if(TryDetermineEquality(out bool equals, comparer, expressions.ElementAt(i)) && !equals) {
                 result = false;
                 return true;
-            }else if(!comparer.Equals(expressions.ElementAt(i))) {
+            } else if(!comparer.Equals(expressions.ElementAt(i))) {
                 result = default;
                 return false;
             }
