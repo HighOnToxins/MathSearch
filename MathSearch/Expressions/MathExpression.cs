@@ -10,7 +10,7 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     public abstract MathExpression Simplify(MathSystem? context = null);
 
-    public abstract MathType DetermineType(MathSystem? context = null);
+    public abstract MathType EvaluateType(MathSystem? context = null);
 
     public abstract MathExpression Clone();
 
@@ -28,7 +28,7 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
         children ??= GetChildren();
 
         List<MathExpression> temp = AsContext(children).ToList();
-        if(temp.Count > 0) temp.RemoveAt(index);
+        if(index < temp.Count) temp.RemoveAt(index);
 
         context ??= new();
         return new MathSystem(context) { temp };
@@ -39,6 +39,14 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
     public IEnumerable<MathExpression> Extract<E>() where E : MathExpression {
         if(this is E) {
             return GetChildren().SelectMany(c => c.Extract<E>());
+        } else {
+            return new[] { Clone() };
+        }
+    }
+
+    public IEnumerable<MathExpression> Extract() {
+        if(ChildCount > 0) {
+            return GetChildren().SelectMany(c => c.Extract());
         } else {
             return new[] { Clone() };
         }

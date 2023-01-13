@@ -13,7 +13,7 @@ public enum MathType {
 public static class UtilMathType {
 
     public static bool Contains(this MathType type, MathExpression expression, MathSystem? context = null) {
-        return expression.DetermineType(context).IsSubTypeOf(type);
+        return expression.EvaluateType(context).IsSubTypeOf(type);
     }
 
     public static bool IsSubTypeOf(this MathType sub, MathType super) {

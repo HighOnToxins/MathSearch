@@ -74,12 +74,12 @@ public abstract class OperatorExpression: MathExpression {
 
     protected abstract bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result);
 
-    public override MathType DetermineType(MathSystem? context = null) {
+    public override MathType EvaluateType(MathSystem? context = null) {
         context ??= new();
-        return EvaluateType(context).IntersectWith(context.DetermineTypeOf(this));
+        return ComputeType(context).IntersectWith(context.DetermineTypeOf(this));
     }
 
-    protected MathType EvaluateType(MathSystem context) {
+    protected MathType ComputeType(MathSystem context) {
         if(ConditionIsMet(children, context)) {
             return ComputeType(children, context);
         } else {

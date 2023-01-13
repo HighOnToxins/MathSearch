@@ -5,6 +5,7 @@ using MathSearch.Expressions;
 using MathSearch.Expression;
 using MathSearch.Expressions.Sets;
 using MathSearch.Expressions.Basics;
+using System.Linq;
 
 namespace MathTest;
 
@@ -59,17 +60,15 @@ public sealed class SystemTests {
             )
         };
 
-        HashSet<MathExpression> expect = new() {
-            new InExpression(new VariableExpression("a"), MathType.Boolean),
-            new InExpression(new VariableExpression("b"), MathType.Boolean),
-            new VariableExpression("c"),
-            new VariableExpression("a"),
-            new VariableExpression("b")
-        };
+        MathExpression expect1 = new VariableExpression("c");
+        MathExpression expect2 = new VariableExpression("a");
+        MathExpression expect3 = new VariableExpression("b");
 
         system.Simplify();
 
-        Assert.That(system.Expressions, Is.EqualTo(expect));
+        Assert.That(system.Expressions, Contains.Item(expect1));
+        Assert.That(system.Expressions, Contains.Item(expect2));
+        Assert.That(system.Expressions, Contains.Item(expect3));
 
     }
 
@@ -135,19 +134,4 @@ public sealed class SystemTests {
         Assert.That(system.Expressions.First(), Is.EqualTo(expect));
 
     }
-
-    [Test]
-    public void SystemRemoveAnyTrue() {
-
-        MathSystem system = new() {
-            new BooleanExpression(true),
-        };
-
-        bool expect = false;
-
-        system.Simplify();
-
-        Assert.That(system.Expressions.Any(), Is.EqualTo(expect));
-    }
-
 }

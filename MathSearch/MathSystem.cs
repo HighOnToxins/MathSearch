@@ -39,7 +39,32 @@ public sealed class MathSystem: IEnumerable {
     }
 
     public void Simplify() {
-        expressions = new(expressions.Select(e => e.Simplify()));
+        List<MathExpression> newExpressions = expressions
+            .SelectMany(e => e.Extract<ConjunctionExpression>())
+            .ToList();
+
+        //extract all type information
+        int i = 0;
+        foreach(MathExpression expression in expressions) {
+            newExpressions.AddRange(expression
+                .Extract()
+                .Select(e => new InExpression(e.Clone(), e.EvaluateType(GetContextForChild(i, expressions)))));
+            i++;
+        }
+
+        //simplify all expressions
+        for(int j = 0; j < newExpressions.Count; j++) {
+            newExpressions[j] = newExpressions[j].Simplify(GetContextForChild(j, newExpressions));
+        }
+
+        expressions = new(newExpressions);
+        expressions.Remove(new BooleanExpression(true));
+    }
+
+    private static MathSystem GetContextForChild(int index, IEnumerable<MathExpression> expressions) {
+        List<MathExpression> temp = expressions.ToList();
+        if(index < temp.Count) temp.RemoveAt(index);
+        return new MathSystem() { temp };
     }
 
     public MathExpression Simplify(MathExpression expression) {
@@ -96,6 +121,9 @@ public sealed class MathSystem: IEnumerable {
         bool allAreEqual = true;
         for(int i = 1; i < expressions.Count() & allAreEqual; i++) {
             if(TryDetermineEquality(out bool equals, comparer, expressions.ElementAt(i)) && !equals) {
+                result = false;
+                return true;
+            } else if(comparer.IsSimple() && expressions.ElementAt(i).IsSimple() && !comparer.Equals(expressions.ElementAt(i))) {
                 result = false;
                 return true;
             } else if(!comparer.Equals(expressions.ElementAt(i))) {

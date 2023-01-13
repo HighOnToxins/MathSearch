@@ -27,7 +27,7 @@ public abstract class AtomExpression: MathExpression {
         }
     }
 
-    public override MathType DetermineType(MathSystem? context = null) {
+    public override MathType EvaluateType(MathSystem? context = null) {
         context ??= new();
         return Type.IntersectWith(context.DetermineTypeOf(this));
     }

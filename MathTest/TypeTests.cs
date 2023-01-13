@@ -33,7 +33,7 @@ public sealed class TypeTests {
             new BooleanExpression(true)
         );
 
-        MathType type = expression.DetermineType();
+        MathType type = expression.EvaluateType();
 
         Assert.That(type, Is.EqualTo(MathType.Boolean));
     }
@@ -49,7 +49,7 @@ public sealed class TypeTests {
             new BooleanExpression(true)
         );
 
-        MathType type = expression.DetermineType();
+        MathType type = expression.EvaluateType();
 
         Assert.That(type, Is.EqualTo(MathType.Universe));
     }

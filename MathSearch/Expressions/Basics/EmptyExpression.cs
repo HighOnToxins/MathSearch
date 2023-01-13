@@ -10,7 +10,7 @@ public sealed class EmptyExpression: MathExpression {
 
     public override MathExpression Clone() => new EmptyExpression();
 
-    public override MathType DetermineType(MathSystem? context = null) => MathType.Nothing;
+    public override MathType EvaluateType(MathSystem? context = null) => MathType.Nothing;
 
     public override IEnumerable<MathExpression> GetChildren() => Array.Empty<MathExpression>();
 
