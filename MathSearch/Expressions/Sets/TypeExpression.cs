@@ -3,6 +3,7 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions.Sets;
 
+[Simple]
 public sealed class TypeExpression: AtomExpression<MathType> {
     public override MathType Type => MathType.Set;
 

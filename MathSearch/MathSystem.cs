@@ -38,18 +38,19 @@ public sealed class MathSystem : IEnumerable {
         }
     }
 
+    //TODO: Add new expressions based on equalities.
     public void Simplify() {
         expressions = new(expressions.Select(e => e.Simplify()));
     }
 
     public MathExpression Simplify(MathExpression expression) {
 
-        //TODO: Add replacement towards atoms that are deemed simpler. (Maybe create an attribute?)
-
+        //contains the expression
         if(expressions.Contains(expression)) {
             return new BooleanExpression(true);
         }
 
+        //contains the notted expression
         bool containsNot = expressions
             .OfType<NotExpression>()
             .Select(e => e.Child)
@@ -58,6 +59,18 @@ public sealed class MathSystem : IEnumerable {
         if(containsNot) {
             return new BooleanExpression(false);
         }
+
+        //contains simplified equality
+        IEnumerable<MathExpression> replacement = expressions
+            .OfType<EqualsExpression>()
+            .Where(e => e.Children.Contains(expression))
+            .SelectMany(e => e.Children)
+            .Where(e => e.IsSimple());
+        
+        if(replacement.Count() >= 1) {
+            return replacement.First();
+        }
+
 
         return expression.Clone();
     }
@@ -116,7 +129,7 @@ public sealed class MathSystem : IEnumerable {
     }
 
     //TODO: Define equalities of somthing beeing a type, to that thing also beeing of that type.
-    internal MathType EvaluateTypeOf(MathExpression expression) {
+    internal MathType DetermineTypeOf(MathExpression expression) {
         IEnumerable<MathType> types = expressions
             .OfType<InExpression>()
             .Where(i => i.LeftChild.Equals(expression) && i.RightChild is TypeExpression)

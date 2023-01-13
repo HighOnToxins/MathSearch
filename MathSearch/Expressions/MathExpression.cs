@@ -18,6 +18,14 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     object ICloneable.Clone() => Clone();
 
+    public bool IsSimple() {
+        if(this is AtomExpression && Attribute.GetCustomAttribute(GetType(), typeof(SimpleAttribute)) != null) {
+            return true;
+        } else {
+            return ChildCount > 0 && GetChildren().All(e => e.IsSimple());
+        }
+    }
+
     public MathSystem? GetContextForChild(int index, IEnumerable<MathExpression>? children = null, MathSystem? context = null) {
         if(children == null) children = GetChildren();
 
