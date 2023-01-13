@@ -38,7 +38,6 @@ public sealed class MathSystem : IEnumerable {
         }
     }
 
-    //TODO: Add new expressions based on equalities.
     public void Simplify() {
         expressions = new(expressions.Select(e => e.Simplify()));
     }
@@ -128,7 +127,6 @@ public sealed class MathSystem : IEnumerable {
         return false;
     }
 
-    //TODO: Define equalities of somthing beeing a type, to that thing also beeing of that type.
     internal MathType DetermineTypeOf(MathExpression expression) {
         IEnumerable<MathType> types = expressions
             .OfType<InExpression>()

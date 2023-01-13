@@ -11,6 +11,42 @@ namespace MathTest;
 public sealed class SystemTests {
 
     [Test]
+    public void SystemUsesSimplestEquation() {
+
+        MathSystem system = new() {
+            new EqualsExpression(
+                new ConjunctionExpression(
+                    new VariableExpression("a"),
+                    new VariableExpression("b")
+                ),
+                new BooleanExpression(true)
+            ),
+            new EqualsExpression(
+                new ConjunctionExpression(
+                    new VariableExpression("a"),
+                    new NotExpression(new VariableExpression("b"))
+                ),
+                new BooleanExpression(false)
+            ),
+        };
+
+        HashSet<MathExpression> expected = new() {
+            new EqualsExpression(
+                new ConjunctionExpression(
+                    new VariableExpression("a"),
+                    new VariableExpression("b")
+                ),
+                new BooleanExpression(true)
+            ),
+        };
+
+        system.Simplify();
+
+        Assert.That(system.Expressions, Is.EqualTo(expected));
+
+    }
+
+    [Test]
     public void SystemExtractsConjunction() {
 
         MathSystem system = new() {
