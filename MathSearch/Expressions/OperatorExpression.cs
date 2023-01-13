@@ -74,11 +74,7 @@ public abstract class OperatorExpression: MathExpression {
 
     protected abstract bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result);
 
-    internal override MathType DetermineTypeBasedOn(MathSystem context) {
-        return DetermineTypeBasedOn2(context).IntersectWith(context.GetTypeOf(this));
-    }
-
-    private MathType DetermineTypeBasedOn2(MathSystem context) {
+    protected override MathType ComputeType(MathSystem context) {
         if(ConditionIsMet(children, context)) {
             return DetermineType(children, context);
         } else {

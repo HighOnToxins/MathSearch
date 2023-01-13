@@ -186,8 +186,12 @@ public sealed class MathSystem: IEnumerable {
             .Where(i => i.LeftChild.Equals(expression) && i.RightChild is TypeExpression)
             .Select(i => i.RightChild is TypeExpression typeExpression ? typeExpression.Value : MathType.Universe);
 
+        IEnumerable<MathType> types2 = GetEqualitiesOf(expression).Select(e => e.DetermineType());
+
+        MathType type3 = expressions.Contains(expression) ? MathType.Boolean : MathType.Universe;
+
         MathType type = MathType.Universe;
-        foreach(MathType t in types) {
+        foreach(MathType t in types.Concat(types2).Concat(new MathType[] { type3 })) {
             type = type.IntersectWith(t);
         }
 

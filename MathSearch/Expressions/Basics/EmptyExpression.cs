@@ -21,5 +21,5 @@ public sealed class EmptyExpression: MathExpression {
 
     protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
 
-    internal override MathType DetermineTypeBasedOn(MathSystem context) => MathType.Nothing;
+    protected override MathType ComputeType(MathSystem context) => MathType.Nothing;
 }

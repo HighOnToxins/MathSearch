@@ -11,6 +11,19 @@ namespace MathTest;
 public sealed class EqualityTests {
 
     [Test]
+    public void EqualityDoesNotCreateInfiniteLoop() {
+
+        MathSystem system = new(){
+            new EqualsExpression(new VariableExpression("a"), new VariableExpression("b")),
+            new EqualsExpression(new VariableExpression("b"), new VariableExpression("c")),
+        };
+
+        system.Simplify();
+
+        Assert.Pass();
+    }
+
+    [Test]
     public void VariablesAreEqualToThemselves() {
         MathExpression determinant = new EqualsExpression(new VariableExpression("a"), new VariableExpression("a"));
         MathExpression expected = new BooleanExpression(true);

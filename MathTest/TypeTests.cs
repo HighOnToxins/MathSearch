@@ -82,6 +82,7 @@ public sealed class TypeTests {
 
         MathType expected = MathType.Boolean;
 
+        system.Simplify();
         MathType result = system.DetermineType(new VariableExpression("a"));
 
         Assert.That(result, Is.EqualTo(expected));
@@ -89,6 +90,21 @@ public sealed class TypeTests {
 
     [Test]
     public void TopLevelOfSystemImpliesType() {
+
+        MathSystem system = new() {
+              new VariableExpression("a"),
+        };
+
+        MathType expected = MathType.Boolean;
+
+        MathType result = system.DetermineType(new VariableExpression("a"));
+
+        Assert.That(result, Is.EqualTo(expected));
+
+    }
+
+    [Test]
+    public void TypePassesThroughExpressions() {
 
         MathSystem system = new() {
             new DisjunctionExpression(
@@ -104,5 +120,4 @@ public sealed class TypeTests {
         Assert.That(result, Is.EqualTo(expected));
 
     }
-
 }

@@ -7,10 +7,10 @@ namespace MathSearch.Expressions;
 [IsNotSimple]
 public sealed class VariableExpression: AtomExpression<string> {
 
-    public override MathType Type => MathType.Universe;
-
     public VariableExpression(string value) : base(value) {
     }
 
     public override MathExpression Clone() => new VariableExpression(Value);
+
+    protected override MathType ComputeType(MathSystem context) => MathType.Universe;
 }

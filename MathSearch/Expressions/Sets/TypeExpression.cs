@@ -6,8 +6,6 @@ namespace MathSearch.Expressions.Sets;
 
 public sealed class TypeExpression: AtomExpression<MathType> {
 
-    public override MathType Type => MathType.Set;
-
     public TypeExpression(MathType value) : base(value) {
     }
 
@@ -24,4 +22,5 @@ public sealed class TypeExpression: AtomExpression<MathType> {
 
     public override MathExpression Clone() => new TypeExpression(Value);
 
+    protected override MathType ComputeType(MathSystem context) => MathType.Set;
 }

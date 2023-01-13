@@ -12,7 +12,10 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     public MathType DetermineType() => DetermineTypeBasedOn(new MathSystem());
 
-    internal abstract MathType DetermineTypeBasedOn(MathSystem context);
+    internal MathType DetermineTypeBasedOn(MathSystem context) =>
+        ComputeType(context).IntersectWith(context.GetTypeOf(this));
+
+    protected abstract MathType ComputeType(MathSystem context);
 
     public abstract MathExpression Clone();
 
