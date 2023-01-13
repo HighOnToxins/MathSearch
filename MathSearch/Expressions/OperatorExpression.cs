@@ -74,20 +74,19 @@ public abstract class OperatorExpression: MathExpression {
 
     protected abstract bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result);
 
-    public override MathType EvaluateType(MathSystem? context = null) {
-        context ??= new();
-        return ComputeType(context).IntersectWith(context.GetTypeOf(this));
+    internal override MathType DetermineTypeBasedOn(MathSystem context) {
+        return DetermineTypeBasedOn2(context).IntersectWith(DetermineType(children, context));
     }
 
-    protected MathType ComputeType(MathSystem context) {
+    private MathType DetermineTypeBasedOn2(MathSystem context) {
         if(ConditionIsMet(children, context)) {
-            return ComputeType(children, context);
+            return DetermineType(children, context);
         } else {
             return MathType.Universe;
         }
     }
 
-    protected abstract MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context);
+    protected abstract MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context);
 
     public override bool TryGroup<E>(out MathExpression? result)  {
 

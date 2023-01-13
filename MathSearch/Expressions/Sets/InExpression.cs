@@ -13,7 +13,7 @@ public sealed class InExpression: BinaryExpression {
     }
 
     protected override bool Condition(MathExpression leftChild, MathExpression rightChild, MathSystem context) =>
-        rightChild.EvaluateType(context) == MathType.Set;
+        context.DetermineType(leftChild) == MathType.Set;
 
     protected override bool TrySimplify(MathExpression leftChild, MathExpression rightChild, MathSystem context, out MathExpression? result) {
 
@@ -28,7 +28,7 @@ public sealed class InExpression: BinaryExpression {
 
         }else if(rightChild is TypeExpression typeExpression) {
 
-            MathType type = leftChild.EvaluateType(context);
+            MathType type = context.DetermineType(leftChild);
 
             //If all possible values of the expression (type) are in the type (typeExpression.Value)
             if(type.IsSubTypeOf(typeExpression.Value)) {
@@ -48,7 +48,7 @@ public sealed class InExpression: BinaryExpression {
     }
 
     protected override MathType ComputeType(MathExpression leftChild, MathExpression rightChild, MathSystem context) =>
-        rightChild.EvaluateType(context) == MathType.Set ? MathType.Boolean : MathType.Universe;
+        context.DetermineType(rightChild) == MathType.Set ? MathType.Boolean : MathType.Universe;
 
     protected override MathExpression CreateInstance(MathExpression leftChild, MathExpression rightChild) =>
         new InExpression(leftChild, rightChild);

@@ -30,7 +30,7 @@ public abstract class TernaryExpression: OperatorExpression {
 
     protected abstract bool TrySimplify(MathExpression leftChild, MathExpression middleChild, MathExpression rightChild, MathSystem context, out MathExpression? result);
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context) =>
+    protected override MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context) =>
         ComputeType(GetLeftChild(children), GetMiddleChild(children), GetRightChild(children), context);
 
     protected abstract MathType ComputeType(MathExpression leftChild, MathExpression middleChild, MathExpression rightChild, MathSystem context);

@@ -30,7 +30,7 @@ public sealed class SetExpression: OperatorExpression {
         return false;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> simplifiedChild, MathSystem context) => MathType.Set;
+    protected override MathType DetermineType(IEnumerable<MathExpression> simplifiedChild, MathSystem context) => MathType.Set;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new SetExpression(children);
 

@@ -7,8 +7,6 @@ public abstract class AtomExpression: MathExpression {
 
     public override int ChildCount => 0;
 
-    public abstract MathType Type { get; }
-
     public IConvertible Value { get; private init; }
 
     public AtomExpression(IConvertible value) {
@@ -27,11 +25,6 @@ public abstract class AtomExpression: MathExpression {
         }
     }
 
-    public override MathType EvaluateType(MathSystem? context = null) {
-        context ??= new();
-        return Type.IntersectWith(context.GetTypeOf(this));
-    }
-    
     public override bool TryGroup<E>(out MathExpression? result) {
         result = null;
         return false;

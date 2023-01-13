@@ -24,7 +24,7 @@ public abstract class UnaryExpression: OperatorExpression {
 
     protected abstract bool TrySimplify(MathExpression child, MathSystem context, out MathExpression? result);
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context) =>
+    protected override MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context) =>
         ComputeType(GetChild(children), context);
 
     protected abstract MathType ComputeType(MathExpression child, MathSystem context);

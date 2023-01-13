@@ -34,7 +34,7 @@ public sealed class EqualsExpression: OperatorExpression {
         return false;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context) => MathType.Boolean;
+    protected override MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context) => MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new EqualsExpression(children);
 

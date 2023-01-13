@@ -10,7 +10,9 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     public abstract MathExpression Simplify(MathSystem? context = null);
 
-    public abstract MathType EvaluateType(MathSystem? context = null);
+    public MathType DetermineType() => DetermineTypeBasedOn(new MathSystem());
+
+    internal abstract MathType DetermineTypeBasedOn(MathSystem context);
 
     public abstract MathExpression Clone();
 

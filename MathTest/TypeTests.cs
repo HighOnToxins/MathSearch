@@ -33,7 +33,7 @@ public sealed class TypeTests {
             new BooleanExpression(true)
         );
 
-        MathType type = expression.EvaluateType();
+        MathType type = expression.DetermineType();
 
         Assert.That(type, Is.EqualTo(MathType.Boolean));
     }
@@ -49,7 +49,7 @@ public sealed class TypeTests {
             new BooleanExpression(true)
         );
 
-        MathType type = expression.EvaluateType();
+        MathType type = expression.DetermineType();
 
         Assert.That(type, Is.EqualTo(MathType.Universe));
     }
@@ -82,7 +82,7 @@ public sealed class TypeTests {
 
         MathType expected = MathType.Boolean;
 
-        MathType result = system.DetermineTypeOf(new VariableExpression("a"));
+        MathType result = system.DetermineType(new VariableExpression("a"));
 
         Assert.That(result, Is.EqualTo(expected));
     }
@@ -99,7 +99,7 @@ public sealed class TypeTests {
 
         MathType expected = MathType.Boolean;
 
-        MathType result = system.DetermineTypeOf(new VariableExpression("a"));
+        MathType result = system.DetermineType(new VariableExpression("a"));
 
         Assert.That(result, Is.EqualTo(expected));
 

@@ -1,5 +1,4 @@
 ﻿using MathSearch.Expressions;
-using System.Collections.Generic;
 
 namespace MathSearch.Expression;
 
@@ -12,8 +11,21 @@ public enum MathType {
 
 public static class UtilMathType {
 
-    public static bool Contains(this MathType type, MathExpression expression, MathSystem? context = null) {
-        return expression.EvaluateType(context).IsSubTypeOf(type);
+    public static bool TryContains(this MathType type, MathExpression expression, out bool result, MathSystem? context = null) {
+        MathType expressionType = context == null ? expression.DetermineType() : context.DetermineType(expression);
+
+        if(expressionType.IsSubTypeOf(type)) {
+            result = true;
+            return true;
+        }
+
+        if(!expressionType.Overlaps(type)) {
+            result = false;
+            return true;
+        }
+
+        result = default;
+        return false;
     }
 
     public static bool IsSubTypeOf(this MathType sub, MathType super) {

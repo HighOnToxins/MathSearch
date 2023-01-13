@@ -8,7 +8,7 @@ public class NotExpression: UnaryExpression {
     }
 
     protected override bool Condition(MathExpression child, MathSystem context) =>
-        MathType.Boolean.Contains(child, context);
+        MathType.Boolean.TryContains(child, out bool result, context) && result;
 
     protected override bool TrySimplify(MathExpression child, MathSystem context, out MathExpression? result) {
 

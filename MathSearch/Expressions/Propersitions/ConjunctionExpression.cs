@@ -14,7 +14,7 @@ public class ConjunctionExpression: OperatorExpression {
     public ConjunctionExpression(IEnumerable<MathExpression> children) : base(children) { }
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
-        children.All(e => MathType.Boolean.Contains(e, context));
+        children.All(e => MathType.Boolean.TryContains(e, out bool result, context) && result);
 
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
         children
@@ -40,7 +40,7 @@ public class ConjunctionExpression: OperatorExpression {
         return false;
     }
 
-    protected override MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context) => MathType.Boolean;
+    protected override MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context) => MathType.Boolean;
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new ConjunctionExpression(children);
 

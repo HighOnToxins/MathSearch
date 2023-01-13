@@ -5,8 +5,6 @@ using MathSearch.Expressions.Propersitions;
 namespace MathSearch.Expressions.Sets;
 
 public sealed class TypeExpression: AtomExpression<MathType> {
-    public override MathType Type => MathType.Set;
-
     public TypeExpression(MathType value) : base(value) {
     }
 
@@ -19,7 +17,7 @@ public sealed class TypeExpression: AtomExpression<MathType> {
         }
     }
 
-    public override MathExpression Clone() =>
-        new TypeExpression(Value);
+    public override MathExpression Clone() => new TypeExpression(Value);
 
+    internal override MathType DetermineTypeBasedOn(MathSystem context) => MathType.Set;
 }

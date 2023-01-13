@@ -48,7 +48,7 @@ public sealed class MathSystem: IEnumerable {
         foreach(MathExpression expression in expressions) {
             newExpressions.AddRange(expression
                 .Extract()
-                .Select(e => new InExpression(e.Clone(), e.EvaluateType(GetContextForChild(i, expressions)))));
+                .Select(e => new InExpression(e.Clone(), e.DetermineTypeBasedOn(GetContextForChild(i, expressions)))));
             i++;
         }
 
@@ -149,7 +149,7 @@ public sealed class MathSystem: IEnumerable {
     }
 
     private bool TypesAreDisjoint(MathExpression expression1, MathExpression expression2) {
-        return !DetermineTypeOf(expression1).Overlaps(DetermineTypeOf(expression2));
+        return !DetermineType(expression1).Overlaps(DetermineType(expression2));
     }
 
     private bool TryGetEquality(out bool result, params MathExpression[] expressions) {
@@ -178,11 +178,10 @@ public sealed class MathSystem: IEnumerable {
         return false;
     }
 
-    public MathType DetermineTypeOf(MathExpression expression) {
-        return GetTypeOf(expression).IntersectWith(expression.EvaluateType());
-    }
+    public MathType DetermineType(MathExpression expression) =>
+         GetTypeOf(expression).IntersectWith(expression.DetermineTypeBasedOn(this));
 
-    internal MathType GetTypeOf(MathExpression expression) {
+    private MathType GetTypeOf(MathExpression expression) {
         IEnumerable<MathType> types = expressions
             .OfType<InExpression>()
             .Where(i => i.LeftChild.Equals(expression) && i.RightChild is TypeExpression)
