@@ -43,7 +43,7 @@ public sealed class TypeTests {
     }
 
     [Test]
-    public void TypeDeterminesEquality() {
+    public void TypeImpliesEquality() {
 
         MathExpression expression1 = new SetExpression();
         MathExpression expression2 = new ConjunctionExpression();
@@ -59,7 +59,7 @@ public sealed class TypeTests {
     }
 
     [Test]
-    public void EqualityDeterminesType() {
+    public void EqualityImpliesType() {
 
         MathSystem system = new() {
             new EqualsExpression(
@@ -76,7 +76,7 @@ public sealed class TypeTests {
     }
 
     [Test]
-    public void TopLevelOfSystemDeterminesType() {
+    public void TopLevelOfSystemImpliesType() {
 
         MathSystem system = new() {
             new DisjunctionExpression(
