@@ -11,6 +11,18 @@ namespace MathTest;
 public sealed class TypeTests {
 
     [Test]
+    public void BooleanTypeSimplifiesToSet() {
+
+        MathExpression determinant = new TypeExpression(MathType.Boolean);
+
+        MathExpression expected = new SetExpression(new BooleanExpression(false), new BooleanExpression(true));
+
+        MathExpression result = determinant.Simplify();
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void TypeOfConjunctionIsBoolean() {
 
         MathExpression expression = new ConjunctionExpression(

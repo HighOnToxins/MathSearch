@@ -9,8 +9,6 @@ public sealed class TypeExpression: AtomExpression<MathType> {
     public TypeExpression(MathType value) : base(value) {
     }
 
-    //TODO: simplify Boolean type to setExpression "{false, true}"
-
     public override MathExpression Clone() =>
         new TypeExpression(Value);
 
