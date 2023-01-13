@@ -74,4 +74,23 @@ public sealed class TypeTests {
 
         Assert.That(result, Is.EqualTo(expected));
     }
+
+    [Test]
+    public void TopLevelOfSystemDeterminesType() {
+
+        MathSystem system = new() {
+            new DisjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("b")
+            ),
+        };
+
+        MathType expected = MathType.Boolean;
+
+        MathType result = system.DetermineTypeOf(new VariableExpression("a"));
+
+        Assert.That(result, Is.EqualTo(expected));
+
+    }
+
 }
