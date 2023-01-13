@@ -10,6 +10,70 @@ namespace MathTest;
 public class ConjunctionTests {
 
     [Test]
+    public void DisjunctionGroupsWithConjunction() {
+
+        MathSystem system = new(){
+            new InExpression(new VariableExpression("a"), MathType.Boolean),
+            new InExpression(new VariableExpression("b"), MathType.Boolean),
+        };
+
+        MathExpression determinant = new DisjunctionExpression(
+            new ConjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("b")
+            ),
+            new ConjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("c")
+            )
+        );
+
+        MathExpression expected = new ConjunctionExpression(
+            new VariableExpression("a"),
+            new DisjunctionExpression(
+                new VariableExpression("b"),
+                new VariableExpression("c")
+            )
+        );
+
+        MathExpression result = system.Determine(determinant);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ConjunctionGroupsWithDisjunction() {
+
+        MathSystem system = new(){
+            new InExpression(new VariableExpression("a"), MathType.Boolean),
+            new InExpression(new VariableExpression("b"), MathType.Boolean),
+        };
+
+        MathExpression determinant = new ConjunctionExpression(
+            new DisjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("b")
+            ),
+            new DisjunctionExpression(
+                new VariableExpression("a"),
+                new VariableExpression("c")
+            )
+        );
+
+        MathExpression expected = new DisjunctionExpression(
+            new VariableExpression("a"),
+            new ConjunctionExpression(
+                new VariableExpression("b"),
+                new VariableExpression("c")
+            )
+        );
+
+        MathExpression result = system.Determine(determinant);
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void AAndAIsA() {
 
         MathSystem system = new(){
