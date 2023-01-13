@@ -62,7 +62,7 @@ public sealed class TypeTests {
 
         MathSystem system = new();
 
-        if(system.TryEvaluateEquality(out bool result, expression1, expression2)) {
+        if(system.TryDetermineEquality(out bool result, expression1, expression2)) {
             Assert.That(result, Is.False);
         } else {
             Assert.Fail();

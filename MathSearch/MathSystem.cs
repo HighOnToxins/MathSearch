@@ -68,7 +68,11 @@ public sealed class MathSystem: IEnumerable {
         return new MathSystem() { temp };
     }
 
-    public MathExpression Simplify(MathExpression expression) {
+    public MathExpression Determine(MathExpression expression) {
+        return Simplify(expression.Simplify(this));
+    }
+
+    internal MathExpression Simplify(MathExpression expression) {
 
         //contains the expression
         if(expressions.Contains(expression)) {
@@ -93,7 +97,6 @@ public sealed class MathSystem: IEnumerable {
             return replacement.First();
         }
 
-
         return expression.Clone();
     }
 
@@ -103,15 +106,10 @@ public sealed class MathSystem: IEnumerable {
             .Where(e => e.Children.Contains(expression))
             .SelectMany(e => e.Children);
 
-    public MathExpression Determine(MathExpression expression) {
-        return Simplify(expression.Simplify(this));
-    }
+    public bool TryDetermineEquality(out bool result, params MathExpression[] expressions) =>
+        TryDetermineEquality(out result, expressions.AsEnumerable());
 
-
-    public bool TryEvaluateEquality(out bool result, params MathExpression[] expressions) =>
-        TryEvaluateEquality(out result, expressions.AsEnumerable());
-
-    public bool TryEvaluateEquality(out bool result, IEnumerable<MathExpression> expressions) {
+    public bool TryDetermineEquality(out bool result, IEnumerable<MathExpression> expressions) {
 
         if(expressions.Count() <= 1) {
             result = true;
@@ -121,13 +119,21 @@ public sealed class MathSystem: IEnumerable {
         MathExpression comparer = expressions.First();
         bool allAreEqual = true;
         for(int i = 1; i < expressions.Count() & allAreEqual; i++) {
-            if(TryDetermineEquality(out bool equals, comparer, expressions.ElementAt(i)) && !equals) {
+            //Determine not equal by type or context
+            if(     TypesAreDisjoint(expressions, comparer, i) ||
+                    AreNotEqual(expressions, comparer, i)) {
                 result = false;
                 return true;
-            } else if(comparer.IsSimple() && expressions.ElementAt(i).IsSimple() && !comparer.Equals(expressions.ElementAt(i))) {
-                result = false;
+            }
+
+            //determine simplified expressions
+            if(comparer.IsSimple() && expressions.ElementAt(i).IsSimple()) {
+                result = comparer.Equals(expressions.ElementAt(i));
                 return true;
-            } else if(!comparer.Equals(expressions.ElementAt(i))) {
+            }
+
+            //if the expressions are not equal, it can not be determined.
+            if(!comparer.Equals(expressions.ElementAt(i))) {
                 result = default;
                 return false;
             }
@@ -137,7 +143,15 @@ public sealed class MathSystem: IEnumerable {
         return true;
     }
 
-    private bool TryDetermineEquality(out bool result, params MathExpression[] expressions) {
+    private bool AreNotEqual(IEnumerable<MathExpression> expressions, MathExpression comparer, int i) {
+        return TryGetEquality(out bool equals, comparer, expressions.ElementAt(i)) && !equals;
+    }
+
+    private bool TypesAreDisjoint(IEnumerable<MathExpression> expressions, MathExpression comparer, int i) {
+        return !comparer.EvaluateType(this).Overlaps(expressions.ElementAt(i).EvaluateType(this));
+    }
+
+    private bool TryGetEquality(out bool result, params MathExpression[] expressions) {
 
         bool containsEquality = this.expressions
             .OfType<EqualsExpression>()
@@ -164,6 +178,10 @@ public sealed class MathSystem: IEnumerable {
     }
 
     public MathType DetermineTypeOf(MathExpression expression) {
+        return GetTypeOf(expression).IntersectWith(expression.EvaluateType());
+    }
+
+    internal MathType GetTypeOf(MathExpression expression) {
         IEnumerable<MathType> types = expressions
             .OfType<InExpression>()
             .Where(i => i.LeftChild.Equals(expression) && i.RightChild is TypeExpression)

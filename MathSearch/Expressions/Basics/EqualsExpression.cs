@@ -25,7 +25,7 @@ public sealed class EqualsExpression: OperatorExpression {
         } 
         
         //evaluate
-        if(context.TryEvaluateEquality(out bool equalityResult, children)) {
+        if(context.TryDetermineEquality(out bool equalityResult, children)) {
             result = new BooleanExpression(equalityResult);
             return true;
         }

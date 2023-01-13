@@ -29,7 +29,7 @@ public abstract class AtomExpression: MathExpression {
 
     public override MathType EvaluateType(MathSystem? context = null) {
         context ??= new();
-        return Type.IntersectWith(context.DetermineTypeOf(this));
+        return Type.IntersectWith(context.GetTypeOf(this));
     }
     
     public override bool TryGroup<E>(out MathExpression? result) {
