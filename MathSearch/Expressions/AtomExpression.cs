@@ -31,6 +31,11 @@ public abstract class AtomExpression: MathExpression {
         context ??= new();
         return Type.IntersectWith(context.DetermineTypeOf(this));
     }
+    
+    public override bool TryGroup<E>(out MathExpression? result) {
+        result = null;
+        return false;
+    }
 
     protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
 

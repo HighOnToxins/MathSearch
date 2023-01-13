@@ -25,7 +25,7 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
     }
 
     public MathSystem? GetContextForChild(int index, IEnumerable<MathExpression>? children = null, MathSystem? context = null) {
-        if(children == null) children = GetChildren();
+        children ??= GetChildren();
 
         List<MathExpression> temp = AsContext(children).ToList();
         if(temp.Count > 0) temp.RemoveAt(index);
@@ -36,13 +36,15 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     protected abstract IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children);
 
-    public IEnumerable<MathExpression> Extract<T>() where T : MathExpression {
-        if(this is T) {
-            return GetChildren().SelectMany(c => c.Extract<T>());
+    public IEnumerable<MathExpression> Extract<E>() where E : MathExpression {
+        if(this is E) {
+            return GetChildren().SelectMany(c => c.Extract<E>());
         } else {
             return new[] { Clone() };
         }
     }
+
+    public abstract bool TryGroup<E>(out MathExpression? result) where E : OperatorExpression;
 
     public virtual bool Equals(MathExpression? other) {
         if(other == null || !other.GetType().IsEquivalentTo(GetType())) {

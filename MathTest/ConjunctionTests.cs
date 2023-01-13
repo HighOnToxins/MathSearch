@@ -15,6 +15,7 @@ public class ConjunctionTests {
         MathSystem system = new(){
             new InExpression(new VariableExpression("a"), MathType.Boolean),
             new InExpression(new VariableExpression("b"), MathType.Boolean),
+            new InExpression(new VariableExpression("c"), MathType.Boolean),
         };
 
         MathExpression determinant = new DisjunctionExpression(
@@ -47,6 +48,7 @@ public class ConjunctionTests {
         MathSystem system = new(){
             new InExpression(new VariableExpression("a"), MathType.Boolean),
             new InExpression(new VariableExpression("b"), MathType.Boolean),
+            new InExpression(new VariableExpression("c"), MathType.Boolean),
         };
 
         MathExpression determinant = new ConjunctionExpression(

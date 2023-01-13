@@ -89,6 +89,59 @@ public abstract class OperatorExpression: MathExpression {
 
     protected abstract MathType ComputeType(IEnumerable<MathExpression> children, MathSystem context);
 
+    public override bool TryGroup<E>(out MathExpression? result)  {
+
+        IEnumerable<E> eChildren = GetChildren().OfType<E>();
+        IEnumerable<MathExpression> nonEChildren = GetChildren().Except(eChildren);
+
+        if(!eChildren.Any()) {
+            result = null;
+            return false;
+        }
+
+        IEnumerable<MathExpression> comparisons = eChildren.First().GetChildren();
+        List<MathExpression> group = new();
+
+        foreach(MathExpression comparer in comparisons) {
+
+            bool isContained = true;
+            foreach(MathExpression eChild in eChildren) {
+                if(!eChild.GetChildren().Contains(comparer)) {
+                    isContained = false;
+                    break;
+                }
+            }
+
+            if(isContained) {
+                group.Add(comparer);
+            } 
+        }
+
+        if(!group.Any()) {
+            result = null;
+            return false;
+        }
+
+        IEnumerable<MathExpression> nonGroup = eChildren
+            .SelectMany(e => e.GetChildren())
+            .Except(group);
+
+        if(!nonGroup.Any()) {
+            result = null;
+            return false;
+        }
+
+        MathExpression eInstance = eChildren.First().CreateInstance(group.Concat(new MathExpression[] {CreateInstance(nonGroup) }));
+
+        if(nonEChildren.Any()) {
+            result = CreateInstance(new MathExpression[] { eInstance }.Concat(nonEChildren));
+        } else {
+            result = eInstance;
+        }
+        return true;
+
+    }
+
     protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> children);
 
     public override MathExpression Clone() => CreateInstance(children.Select(e => e.Clone()));

@@ -32,6 +32,8 @@ public sealed class DisjunctionExpression: OperatorExpression {
         } else if(children.Any(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
             result = new BooleanExpression(true);
             return true;
+        } else if(TryGroup<ConjunctionExpression>(out result) && result != null) {
+            return true;
         }
 
         result = null;

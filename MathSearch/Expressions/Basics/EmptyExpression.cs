@@ -14,6 +14,11 @@ public sealed class EmptyExpression: MathExpression {
 
     public override IEnumerable<MathExpression> GetChildren() => Array.Empty<MathExpression>();
 
+    public override bool TryGroup<E>(out MathExpression? result) {
+        result = null;
+        return false;
+    }
+
     public override MathExpression Simplify(MathSystem? context = null) => Clone();
 
     protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
