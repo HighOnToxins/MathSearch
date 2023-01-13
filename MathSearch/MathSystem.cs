@@ -59,6 +59,7 @@ public sealed class MathSystem: IEnumerable {
 
         expressions = new(newExpressions);
         expressions.Remove(new BooleanExpression(true));
+        expressions.Remove(new EmptyExpression());
     }
 
     private static MathSystem GetContextForChild(int index, IEnumerable<MathExpression> expressions) {
