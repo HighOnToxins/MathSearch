@@ -22,12 +22,12 @@ public sealed class EqualsExpression: OperatorExpression {
         if(children.Count() == 1) {
             result = children.First();
             return true;
-        } else if(context.TryEvaluateEquality(out bool equalityResult, children)) {
+        } 
+        
+        //evaluate
+        if(context.TryEvaluateEquality(out bool equalityResult, children)) {
             result = new BooleanExpression(equalityResult);
             return true;
-        } else if(children.All(e => e is AtomExpression atomExpression)) {
-            result = null;
-            return false;
         }
 
         result = null;
