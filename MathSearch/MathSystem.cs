@@ -78,7 +78,11 @@ public sealed class MathSystem : IEnumerable {
         return Simplify(expression.Simplify(this));
     }
 
-    public bool TryEvaluateEquality(out bool result, params MathExpression[] expressions) {
+
+    public bool TryEvaluateEquality(out bool result, params MathExpression[] expressions) =>
+        TryEvaluateEquality(out result, expressions);
+
+    public bool TryEvaluateEquality(out bool result, IEnumerable<MathExpression> expressions) {
 
         if(expressions.Count() <= 1) {
             result = true;
@@ -127,7 +131,7 @@ public sealed class MathSystem : IEnumerable {
         return false;
     }
 
-    internal MathType DetermineTypeOf(MathExpression expression) {
+    public MathType DetermineTypeOf(MathExpression expression) {
         IEnumerable<MathType> types = expressions
             .OfType<InExpression>()
             .Where(i => i.LeftChild.Equals(expression) && i.RightChild is TypeExpression)

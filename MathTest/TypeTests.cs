@@ -4,6 +4,7 @@ using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions;
 using MathSearch.Expressions.Sets;
 using MathSearch;
+using MathSearch.Expressions.Basics;
 
 namespace MathTest; 
 
@@ -42,7 +43,7 @@ public sealed class TypeTests {
     }
 
     [Test]
-    public void EqualityDeterminesByType() {
+    public void TypeDeterminesEquality() {
 
         MathExpression expression1 = new SetExpression();
         MathExpression expression2 = new ConjunctionExpression();
@@ -57,4 +58,20 @@ public sealed class TypeTests {
 
     }
 
+    [Test]
+    public void EqualityDeterminesType() {
+
+        MathSystem system = new() {
+            new EqualsExpression(
+                new VariableExpression("a"),
+                new BooleanExpression(true)
+            )
+        };
+
+        MathType expected = MathType.Boolean;
+
+        MathType result = system.DetermineTypeOf(new VariableExpression("a"));
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
 }
