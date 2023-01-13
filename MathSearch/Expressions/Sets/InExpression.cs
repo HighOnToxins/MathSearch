@@ -14,29 +14,36 @@ public sealed class InExpression: BinaryExpression {
     protected override bool Condition(MathExpression leftChild, MathExpression rightChild, MathSystem context) =>
         rightChild.DetermineType(context) == MathType.Set;
 
-    protected override bool TrySimplify(MathExpression simplifiedLeft, MathExpression simplifiedRight, MathSystem context, out MathExpression? result) {
+    protected override bool TrySimplify(MathExpression leftChild, MathExpression rightChild, MathSystem context, out MathExpression? result) {
 
-        if(simplifiedRight is SetExpression setExpression) {
-            result = new BooleanExpression(setExpression.Children.Contains(simplifiedLeft));
-            return true;
+        if(rightChild is SetExpression setExpression) {
+            // Directly contains the expression or if it contains an equality of the expression.
+            if(setExpression.Children.Contains(leftChild) || context.GetEqualitiesOf(leftChild).Any(e => setExpression.Children.Contains(e))) {
+                result = new BooleanExpression(true);
+                return true;
+            }
+
+            // If both are simple then false can be determined.
+            if(leftChild.IsSimple() && setExpression.IsSimple()) {
+                result = new BooleanExpression(setExpression.Children.Contains(leftChild));
+                return true;
+            }
+        }else if(rightChild is TypeExpression typeExpression) {
+
+            MathType type = context.DetermineTypeOf(leftChild);
+
+            //If all possible values of the expression (type) are in the type (typeExpression.Value)
+            if(type.IsSubTypeOf(typeExpression.Value)) {
+                result = new BooleanExpression(true);
+                return true;
+            }
+
+            //If they have nothing in common then false
+            if(!type.Overlaps(typeExpression.Value)) {
+                result = new BooleanExpression(false);
+                return true;
+            }
         }
-
-        //TODO: Write simplification for in-operator.
-
-        //Check context for typeInfo or in equality with true or false
-
-        // Add SetBuilder extractor.
-
-        //if(simplifiedRightChild is SetExpression setExpression) {
-        //    IEnumerable<MathExpression> children = setExpression.Children.Select(e => new EqualsExpression(LeftChild, e));
-        //    result = new DisjunctionExpression(children);
-        //}
-
-        //simplify in-boolean-set 
-
-        //check if context agrees
-
-        //anything contained within empty type is false
 
         result = null;
         return false;
