@@ -178,10 +178,9 @@ public sealed class MathSystem: IEnumerable {
         return false;
     }
 
-    public MathType DetermineType(MathExpression expression) =>
-         GetTypeOf(expression).IntersectWith(expression.DetermineTypeBasedOn(this));
+    public MathType DetermineType(MathExpression expression) => expression.DetermineTypeBasedOn(this);
 
-    private MathType GetTypeOf(MathExpression expression) {
+    internal MathType GetTypeOf(MathExpression expression) {
         IEnumerable<MathType> types = expressions
             .OfType<InExpression>()
             .Where(i => i.LeftChild.Equals(expression) && i.RightChild is TypeExpression)

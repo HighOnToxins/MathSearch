@@ -13,7 +13,7 @@ public sealed class InExpression: BinaryExpression {
     }
 
     protected override bool Condition(MathExpression leftChild, MathExpression rightChild, MathSystem context) =>
-        context.DetermineType(leftChild) == MathType.Set;
+        MathType.Set.TryContains(rightChild, out bool result, context) && result;
 
     protected override bool TrySimplify(MathExpression leftChild, MathExpression rightChild, MathSystem context, out MathExpression? result) {
 

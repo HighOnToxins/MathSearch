@@ -39,7 +39,7 @@ public abstract class OperatorExpression: MathExpression {
             return resultUp;
         }
 
-        if(!children.Any() || children.Contains(new EmptyExpression())) {
+        if(children.Contains(new EmptyExpression())) {
             return new EmptyExpression();
         } else {
             return CreateInstance(children);
@@ -75,7 +75,7 @@ public abstract class OperatorExpression: MathExpression {
     protected abstract bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result);
 
     internal override MathType DetermineTypeBasedOn(MathSystem context) {
-        return DetermineTypeBasedOn2(context).IntersectWith(DetermineType(children, context));
+        return DetermineTypeBasedOn2(context).IntersectWith(context.GetTypeOf(this));
     }
 
     private MathType DetermineTypeBasedOn2(MathSystem context) {

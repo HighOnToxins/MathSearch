@@ -63,10 +63,10 @@ internal sealed class SetTests {
     }
 
     [Test]
-    public void EmptySimplifiesToNothing() {
+    public void NothingSimplifiesToEmptySet() {
 
-        MathExpression expression = new SetExpression();
-        MathExpression expected = new TypeExpression(MathType.Nothing);
+        MathExpression expression = new TypeExpression(MathType.Nothing);
+        MathExpression expected = new SetExpression();
 
         MathExpression result = expression.Simplify();
 
@@ -78,7 +78,7 @@ internal sealed class SetTests {
     public void SetRemovesEmptyExpression() {
 
         MathExpression expression = new SetExpression(new EmptyExpression());
-        MathExpression expected = new TypeExpression(MathType.Nothing);
+        MathExpression expected = new SetExpression();
 
         MathExpression result = expression.Simplify();
 

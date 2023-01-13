@@ -9,6 +9,8 @@ public abstract class AtomExpression: MathExpression {
 
     public IConvertible Value { get; private init; }
 
+    public abstract MathType Type { get; }
+
     public AtomExpression(IConvertible value) {
         Value = value;
     }
@@ -23,6 +25,10 @@ public abstract class AtomExpression: MathExpression {
         } else {
             return Clone();
         }
+    }
+
+    internal override MathType DetermineTypeBasedOn(MathSystem context) {
+        return Type.IntersectWith(context.GetTypeOf(this));
     }
 
     public override bool TryGroup<E>(out MathExpression? result) {
