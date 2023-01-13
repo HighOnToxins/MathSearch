@@ -119,21 +119,22 @@ public sealed class MathSystem: IEnumerable {
         MathExpression comparer = expressions.First();
         bool allAreEqual = true;
         for(int i = 1; i < expressions.Count() & allAreEqual; i++) {
+            MathExpression comparer2 = expressions.ElementAt(i);
+
             //Determine not equal by type or context
-            if(     TypesAreDisjoint(expressions, comparer, i) ||
-                    AreNotEqual(expressions, comparer, i)) {
+            if(TypesAreDisjoint(comparer, comparer2) || AreNotEqual(comparer, comparer2)) {
                 result = false;
                 return true;
             }
 
             //determine simplified expressions
-            if(comparer.IsSimple() && expressions.ElementAt(i).IsSimple()) {
+            if(comparer.IsSimple() && comparer2.IsSimple()) {
                 result = comparer.Equals(expressions.ElementAt(i));
                 return true;
             }
 
             //if the expressions are not equal, it can not be determined.
-            if(!comparer.Equals(expressions.ElementAt(i))) {
+            if(!comparer.Equals(comparer2)) {
                 result = default;
                 return false;
             }
@@ -143,12 +144,12 @@ public sealed class MathSystem: IEnumerable {
         return true;
     }
 
-    private bool AreNotEqual(IEnumerable<MathExpression> expressions, MathExpression comparer, int i) {
-        return TryGetEquality(out bool equals, comparer, expressions.ElementAt(i)) && !equals;
+    private bool AreNotEqual(MathExpression expression1, MathExpression expression2) {
+        return TryGetEquality(out bool equals, expression1, expression2) && !equals;
     }
 
-    private bool TypesAreDisjoint(IEnumerable<MathExpression> expressions, MathExpression comparer, int i) {
-        return !comparer.EvaluateType(this).Overlaps(expressions.ElementAt(i).EvaluateType(this));
+    private bool TypesAreDisjoint(MathExpression expression1, MathExpression expression2) {
+        return !DetermineTypeOf(expression1).Overlaps(DetermineTypeOf(expression2));
     }
 
     private bool TryGetEquality(out bool result, params MathExpression[] expressions) {
