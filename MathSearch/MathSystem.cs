@@ -69,7 +69,7 @@ public sealed class MathSystem: IEnumerable {
     }
 
     public MathExpression Determine(MathExpression expression) {
-        return Simplify(expression.Simplify(this));
+        return expression.Simplify(this);
     }
 
     internal MathExpression Simplify(MathExpression expression) {
