@@ -3,6 +3,8 @@ namespace MathSearch.Expressions;
 
 public abstract class AtomExpression: MathExpression {
 
+    public override int Precedence => 0;
+
     public override int ChildCount => 0;
 
     public IConvertible Value { get; private init; }

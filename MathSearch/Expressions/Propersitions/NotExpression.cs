@@ -2,8 +2,10 @@
 
 namespace MathSearch.Expressions.Propersitions;
 
-[Precedence(1)]
 public class NotExpression: UnaryExpression {
+
+    public override int Precedence => 1;
+
     public NotExpression(MathExpression child) : base(child) {
     }
 

@@ -4,8 +4,9 @@ using System.Collections.Immutable;
 
 namespace MathSearch.Expressions.Propersitions;
 
-[Precedence(3)]
 public sealed class DisjunctionExpression: OperatorExpression {
+
+    public override int Precedence => 3;
 
     public IReadOnlyList<MathExpression> Children => children;
 

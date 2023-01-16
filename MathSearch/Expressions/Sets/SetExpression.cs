@@ -6,6 +6,8 @@ namespace MathSearch.Expressions.Sets;
 
 public sealed class SetExpression: OperatorExpression {
 
+    public override int Precedence => 0;
+
     public IReadOnlyList<MathExpression> Children => children;
 
     public SetExpression(params MathExpression[] children) : base(children) { }

@@ -9,7 +9,6 @@ public sealed class TypeExpression: AtomExpression<MathType> {
     public TypeExpression(MathType value) : base(value) {
     }
 
-
     public override MathExpression Simplify(MathSystem? context = null) {
         if(Value == MathType.Boolean) {
             return new SetExpression(new BooleanExpression(false), new BooleanExpression(true));

@@ -6,6 +6,8 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     public abstract int ChildCount { get; }
 
+    public abstract int Precedence { get; }
+
     public abstract IEnumerable<MathExpression> GetChildren();
 
     public abstract MathExpression Simplify(MathSystem? context = null);
@@ -22,7 +24,7 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
     object ICloneable.Clone() => Clone();
 
     public bool IsSimple() {
-        if(Attribute.GetCustomAttribute(GetType(), typeof(IsNotSimpleAttribute)) != null) {
+        if(this is INonSimpleExpression) {
             return false;
         } else {
             return GetChildren().All(e => e.IsSimple());
@@ -113,7 +115,7 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
         //compare precedence
         if(!expression1.GetType().IsEquivalentTo(expression2.GetType())) {
-            int result = expression2.GetPrecedence() - expression1.GetPrecedence();
+            int result = expression2.Precedence - expression1.Precedence;
             return result != 0 ? result : expression2.GetHashCode() - expression1.GetHashCode();
         }
 
@@ -123,14 +125,6 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
         }
 
         return 0;
-    }
-
-    private int GetPrecedence() {
-        if(Attribute.GetCustomAttribute(GetType(), typeof(PrecedenceAttribute)) is PrecedenceAttribute attrib) {
-            return attrib.Value;
-        } else {
-            return GetHashCode();
-        }
     }
 
     private static int CompareChildrenOf(MathExpression operator1, MathExpression operator2) {

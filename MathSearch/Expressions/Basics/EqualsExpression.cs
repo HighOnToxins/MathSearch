@@ -4,8 +4,9 @@ using MathSearch.Expressions.Propersitions;
 
 namespace MathSearch.Expressions.Basics;
 
-[Precedence(6)]
 public sealed class EqualsExpression: OperatorExpression {
+
+    public override int Precedence => 6;
 
     public IReadOnlyList<MathExpression> Children => children;
 

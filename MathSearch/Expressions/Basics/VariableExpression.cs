@@ -3,9 +3,7 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions;
 
-[Precedence(0)]
-[IsNotSimple]
-public sealed class VariableExpression: AtomExpression<string> {
+public sealed class VariableExpression: AtomExpression<string>, INonSimpleExpression {
 
     public VariableExpression(string value) : base(value) {
     }

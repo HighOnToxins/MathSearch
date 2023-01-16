@@ -6,6 +6,8 @@ using MathSearch.Expressions.Propersitions;
 namespace MathSearch.Expressions.Sets;
 
 public sealed class InExpression: BinaryExpression {
+    public override int Precedence => 7;
+
     public InExpression(MathExpression leftChild, MathExpression rightChild) : base(leftChild, rightChild) {
     }
 
