@@ -1,6 +1,5 @@
 ﻿
 using MathSearch.Expression;
-using System.Collections.Immutable;
 
 namespace MathSearch.Expressions.Propersitions;
 
@@ -33,7 +32,7 @@ public class ConjunctionExpression: OperatorExpression {
         } else if(children.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
             return true;
-        } else if(TryGroup<DisjunctionExpression>(out result) && result != null){
+        } else if(TryGroup<DisjunctionExpression>(out result) && result != null) {
             return true;
         }
 

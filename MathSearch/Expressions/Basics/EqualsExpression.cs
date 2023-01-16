@@ -23,8 +23,8 @@ public sealed class EqualsExpression: OperatorExpression {
         if(children.Count() == 1) {
             result = children.First();
             return true;
-        } 
-        
+        }
+
         //evaluate
         if(context.TryDetermineEquality(out bool equalityResult, children)) {
             result = new BooleanExpression(equalityResult);

@@ -1,11 +1,10 @@
 ﻿
 using MathSearch;
-using MathSearch.Expressions.Propersitions;
-using MathSearch.Expressions;
 using MathSearch.Expression;
-using MathSearch.Expressions.Sets;
+using MathSearch.Expressions;
 using MathSearch.Expressions.Basics;
-using System.Linq;
+using MathSearch.Expressions.Propersitions;
+using MathSearch.Expressions.Sets;
 
 namespace MathTest;
 

@@ -84,7 +84,7 @@ public abstract class OperatorExpression: MathExpression {
 
     protected abstract MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context);
 
-    public override bool TryGroup<E>(out MathExpression? result)  {
+    public override bool TryGroup<E>(out MathExpression? result) {
 
         IEnumerable<E> eChildren = GetChildren().OfType<E>();
         IEnumerable<MathExpression> nonEChildren = GetChildren().Except(eChildren);
@@ -109,7 +109,7 @@ public abstract class OperatorExpression: MathExpression {
 
             if(isContained) {
                 group.Add(comparer);
-            } 
+            }
         }
 
         if(!group.Any()) {
@@ -126,7 +126,7 @@ public abstract class OperatorExpression: MathExpression {
             return false;
         }
 
-        MathExpression eInstance = eChildren.First().CreateInstance(group.Concat(new MathExpression[] {CreateInstance(nonGroup) }));
+        MathExpression eInstance = eChildren.First().CreateInstance(group.Concat(new MathExpression[] { CreateInstance(nonGroup) }));
 
         if(nonEChildren.Any()) {
             result = CreateInstance(new MathExpression[] { eInstance }.Concat(nonEChildren));

@@ -1,12 +1,12 @@
 ﻿
+using MathSearch;
 using MathSearch.Expression;
+using MathSearch.Expressions;
 using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions.Sets;
-using MathSearch.Expressions;
-using MathSearch;
 
-namespace MathTest; 
+namespace MathTest;
 
 public sealed class EqualityTests {
 

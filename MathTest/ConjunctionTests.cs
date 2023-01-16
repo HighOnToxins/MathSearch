@@ -1,7 +1,6 @@
 using MathSearch;
 using MathSearch.Expression;
 using MathSearch.Expressions;
-using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions.Sets;
 

@@ -28,7 +28,7 @@ public sealed class InExpression: BinaryExpression {
             result = new DisjunctionExpression(dijunctionChildren).Simplify(context);
             return true;
 
-        }else if(rightChild is TypeExpression typeExpression) {
+        } else if(rightChild is TypeExpression typeExpression) {
 
             MathType type = context.DetermineType(leftChild);
 

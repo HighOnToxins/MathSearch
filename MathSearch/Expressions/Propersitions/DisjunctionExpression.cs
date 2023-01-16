@@ -1,6 +1,5 @@
 ﻿
 using MathSearch.Expression;
-using System.Collections.Immutable;
 
 namespace MathSearch.Expressions.Propersitions;
 

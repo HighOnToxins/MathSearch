@@ -14,7 +14,7 @@ public abstract class BinaryExpression: OperatorExpression {
     public override int ChildCount => 2;
 
     public BinaryExpression(MathExpression leftChild, MathExpression rightChild) : base(leftChild, rightChild) {
-      
+
     }
 
     protected abstract bool Condition(MathExpression leftChild, MathExpression rightChild, MathSystem context);

@@ -4,7 +4,6 @@ using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
 using MathSearch.Expressions.Sets;
 using System.Collections;
-using System.Linq.Expressions;
 
 namespace MathSearch;
 

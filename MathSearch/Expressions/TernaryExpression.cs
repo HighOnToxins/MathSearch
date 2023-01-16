@@ -17,7 +17,7 @@ public abstract class TernaryExpression: OperatorExpression {
     public override int ChildCount => 3;
 
     public TernaryExpression(MathExpression leftChild, MathExpression middleChild, MathExpression rightChild) : base(leftChild, middleChild, rightChild) { }
-    
+
     protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children;
 
     protected abstract bool Condition(MathExpression leftChild, MathExpression middleChild, MathExpression rightChild, MathSystem context);
