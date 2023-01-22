@@ -2,7 +2,9 @@
 using MathSearch.Expressions;
 using MathSearch.Expressions.Basics;
 using MathSearch.Expressions.Propersitions;
+using MathSearch.Expressions.Sets;
 using System.Collections;
+using System.Linq.Expressions;
 
 namespace MathSearch;
 
@@ -44,8 +46,20 @@ public sealed class MathSystem : IEnumerable {
     }
 
     public void Simplify() {
-        throw new NotImplementedException();
+        foreach(MathExpression expression in expressions) {
+            expressions.Add(new InExpression(expression, MathType.Boolean).Simplify(GetContextFor(expression)));
+        }
+
+        foreach(MathExpression expression in expressions) {
+            expressions.Add(expression.Simplify(GetContextFor(expression)));
+        }
+
+        //TODO: Extract conjunction
+        //TODO: Combine equality.
     }
+
+    private MathSystem GetContextFor(MathExpression expression) =>
+        new(expressions.Except(new MathExpression[] { expression }));
 
     public bool IsTrue(MathExpression expression) {
         MathExpression result = Determine(expression);
