@@ -33,7 +33,7 @@ public sealed class TypeTests {
             new BooleanExpression(true)
         );
 
-        MathType type = expression.DetermineType();
+        MathType type = expression.GetMathType();
 
         Assert.That(type, Is.EqualTo(MathType.Boolean));
     }
@@ -49,7 +49,7 @@ public sealed class TypeTests {
             new BooleanExpression(true)
         );
 
-        MathType type = expression.DetermineType();
+        MathType type = expression.GetMathType();
 
         Assert.That(type, Is.EqualTo(MathType.Universe));
     }
@@ -62,8 +62,9 @@ public sealed class TypeTests {
 
         MathSystem system = new();
 
-        if(system.TryDetermineEquality(out bool result, expression1, expression2)) {
-            Assert.That(result, Is.False);
+        if(system.IsTrue(new EqualsExpression(expression1, expression2)) &&
+            !system.IsFalse(new EqualsExpression(expression1, expression2))) {
+            Assert.Pass();
         } else {
             Assert.Fail();
         }
@@ -83,7 +84,7 @@ public sealed class TypeTests {
         MathType expected = MathType.Boolean;
 
         system.Simplify();
-        MathType result = system.DetermineType(new VariableExpression("a"));
+        MathType result = new VariableExpression("a").GetMathType(system);
 
         Assert.That(result, Is.EqualTo(expected));
     }

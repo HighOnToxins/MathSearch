@@ -22,7 +22,7 @@ public sealed class InExpression: BinaryExpression {
         if(rightChild is SetExpression setExpression) {
 
             //simplifies to a dijunction of equals
-            IEnumerable<MathExpression> dijunctionChildren = setExpression.Children
+            IEnumerable<MathExpression> dijunctionChildren = setExpression.Operands
                 .Select(e => new EqualsExpression(leftChild.Clone(), e));
 
             result = new DisjunctionExpression(dijunctionChildren).Simplify(context);
@@ -30,7 +30,7 @@ public sealed class InExpression: BinaryExpression {
 
         } else if(rightChild is TypeExpression typeExpression) {
 
-            MathType type = context.DetermineType(leftChild);
+            MathType type = leftChild.GetMathType(context);
 
             //If all possible values of the expression (type) are in the type (typeExpression.Value)
             if(type.IsSubTypeOf(typeExpression.Value)) {
@@ -49,12 +49,22 @@ public sealed class InExpression: BinaryExpression {
         return false;
     }
 
-    protected override MathType ComputeType(MathExpression leftChild, MathExpression rightChild, MathSystem context) =>
-        context.DetermineType(rightChild) == MathType.Set ? MathType.Boolean : MathType.Universe;
+    protected override MathType ComputeType(MathSystem context) =>
+        RightOperand.GetMathType(context) == MathType.Set ? MathType.Boolean : MathType.Universe;
+
+    public override IEnumerable<MathType> TypeOfOperands(MathType typeOfThis) {
+        yield return MathType.Universe;
+
+        if(typeOfThis.IsSubTypeOf(MathType.Boolean)) {
+            yield return MathType.Set;
+        } else {
+            yield return MathType.Universe;
+        }
+    }
 
     protected override MathExpression CreateInstance(MathExpression leftChild, MathExpression rightChild) =>
         new InExpression(leftChild, rightChild);
 
-    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
+    //TODO: add context stuff for in expression
 
 }

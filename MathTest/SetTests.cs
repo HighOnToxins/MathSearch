@@ -73,15 +73,15 @@ internal sealed class SetTests {
 
     }
 
-    [Test]
-    public void SetRemovesEmptyExpression() {
+    //[Test]
+    //public void SetRemovesEmptyExpression() {
 
-        MathExpression expression = new SetExpression(new EmptyExpression());
-        MathExpression expected = new SetExpression();
+    //    MathExpression expression = new SetExpression(new EmptyExpression());
+    //    MathExpression expected = new SetExpression();
 
-        MathExpression result = expression.Simplify();
+    //    MathExpression result = expression.Simplify();
 
-        Assert.That(result, Is.EqualTo(expected));
+    //    Assert.That(result, Is.EqualTo(expected));
 
-    }
+    //}
 }

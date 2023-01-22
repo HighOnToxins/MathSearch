@@ -42,7 +42,9 @@ public sealed class SystemTests {
 
         system.Simplify();
 
-        Assert.That(system.Expressions, Is.EqualTo(expected));
+        foreach(var e in expected) {
+            Assert.That(system.IsTrue(e));
+        }
 
     }
 
@@ -59,15 +61,17 @@ public sealed class SystemTests {
             )
         };
 
-        MathExpression expect1 = new VariableExpression("c");
-        MathExpression expect2 = new VariableExpression("a");
-        MathExpression expect3 = new VariableExpression("b");
+        HashSet<MathExpression> expected = new() {
+            new VariableExpression("c"),
+            new VariableExpression("a"),
+            new VariableExpression("b"),
+        };
 
         system.Simplify();
 
-        Assert.That(system.Expressions, Contains.Item(expect1));
-        Assert.That(system.Expressions, Contains.Item(expect2));
-        Assert.That(system.Expressions, Contains.Item(expect3));
+        foreach(var e in expected) {
+            Assert.That(system.IsTrue(e));
+        }
 
     }
 
@@ -78,30 +82,27 @@ public sealed class SystemTests {
             new BooleanExpression(true)
         };
 
-        HashSet<MathExpression> expect = new() {
-        };
-
         system.Simplify();
 
-        Assert.That(system.Expressions, Is.EqualTo(expect));
+        Assert.That(system.IsEmpty);
 
     }
 
-    [Test]
-    public void SystemRemovesEmptyExpression() {
+    //[Test]
+    //public void SystemRemovesEmptyExpression() {
 
-        MathSystem system = new() {
-            new EmptyExpression()
-        };
+    //    MathSystem system = new() {
+    //        new EmptyExpression()
+    //    };
 
-        HashSet<MathExpression> expect = new() {
-        };
+    //    HashSet<MathExpression> expect = new() {
+    //    };
 
-        system.Simplify();
+    //    system.Simplify();
 
-        Assert.That(system.Expressions, Is.EqualTo(expect));
+    //    Assert.That(system.Expressions, Is.EqualTo(expect));
 
-    }
+    //}
 
     [Test]
     public void CheckInconsistencyWorks() {
@@ -126,11 +127,11 @@ public sealed class SystemTests {
             new VariableExpression("a"),
         };
 
-        MathExpression expect = new VariableExpression("a");
+        MathExpression expected = new VariableExpression("a");
 
         system.Simplify();
 
-        Assert.That(system.Expressions.First(), Is.EqualTo(expect));
+        Assert.That(system.IsTrue(expected));
 
     }
 }

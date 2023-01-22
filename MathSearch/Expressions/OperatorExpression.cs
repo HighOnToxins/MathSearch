@@ -1,24 +1,36 @@
 ﻿
 using MathSearch.Expression;
-using MathSearch.Expressions.Basics;
 
 namespace MathSearch.Expressions;
 
 public abstract class OperatorExpression: MathExpression {
 
-    protected readonly IReadOnlyList<MathExpression> children;
+    #region Properties
 
-    public override int ChildCount => children.Count;
+    protected readonly IReadOnlyList<MathExpression> operands;
 
-    public OperatorExpression(IEnumerable<MathExpression> children) {
-        this.children = new List<MathExpression>(children);
+    public override int OperandCount => operands.Count;
+
+    #endregion
+
+    #region Constructors
+
+    public OperatorExpression(IEnumerable<MathExpression> operands) {
+        this.operands = new List<MathExpression>(operands);
     }
 
-    public OperatorExpression(params MathExpression[] children) {
-        this.children = children;
+    public OperatorExpression(params MathExpression[] operands) {
+        this.operands = operands;
+
+        //TODO: Add message to exception.
+        if(this.operands.Count != OperandCount) {
+            throw new InvalidDataException();
+        }
     }
 
-    public override IEnumerable<MathExpression> GetChildren() => children;
+    #endregion
+
+    #region Simplify Methods
 
     public override MathExpression Simplify(MathSystem? context = null) {
         context ??= new();
@@ -26,118 +38,63 @@ public abstract class OperatorExpression: MathExpression {
     }
 
     private MathExpression GetSimplification(MathSystem context) {
+        IEnumerable<MathExpression> operands = this.operands;
 
-        IEnumerable<MathExpression> children = this.children;
+        if(TryConditionedSimplify(ref operands, context, out MathExpression? resultDown) && resultDown != null) return resultDown;
 
-        if(TryEvaluateSimplification(ref children, out MathExpression? resultDown, context) && resultDown != null) {
-            return resultDown;
-        }
+        operands = operands.Select(e => e.Simplify(GetContextFor(e).CombineWith(context)));
 
-        children = SimplifyChildren(children, context);
+        if(TryConditionedSimplify(ref operands, context, out MathExpression? resultUp) && resultUp != null) return resultUp;
 
-        if(TryEvaluateSimplification(ref children, out MathExpression? resultUp, context) && resultUp != null) {
-            return resultUp;
-        }
-
-        if(children.Contains(new EmptyExpression())) {
-            return new EmptyExpression();
-        } else {
-            return CreateInstance(children);
-        }
+        return Clone();
     }
 
-    private IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children, MathSystem context) {
-        List<MathExpression> result = children.ToList();
-        for(int i = 0; i < result.Count; i++) {
-            result[i] = result[i].Simplify(GetContextForChild(i, result, context));
-        }
-        return result;
-    }
-
-    private bool TryEvaluateSimplification(ref IEnumerable<MathExpression> children, out MathExpression? result, MathSystem context) {
-        if(ConditionIsMet(children, context)) {
-            children = SimplifyChildren(children);
-
-            if(TrySimplify(children, context, out MathExpression? resultDown) && resultDown != null) {
-                result = resultDown;
-                return true;
-            }
-        }
-
+    private bool TryConditionedSimplify(ref IEnumerable<MathExpression> operands, MathSystem context, out MathExpression? result) {
         result = null;
-        return false;
+        return ConditionIsMet(operands, context) && TrySimplify(ref operands, context, out result);
     }
 
-    protected abstract IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children);
+    protected abstract bool TrySimplify(ref IEnumerable<MathExpression> operands, MathSystem context, out MathExpression? result);
 
-    protected abstract bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context);
+    #endregion
 
-    protected abstract bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result);
+    #region Type Methods
 
-    protected override MathType ComputeType(MathSystem context) {
-        if(ConditionIsMet(children, context)) {
-            return DetermineType(children, context);
+    public override MathType GetMathType(MathSystem? context = null) {
+        context ??= new();
+        if(ConditionIsMet(operands, context)) {
+            return ComputeType(context).IntersectWith(context.TypeOf(this));
         } else {
-            return MathType.Universe;
+            return base.GetMathType(context);
         }
     }
 
-    protected abstract MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context);
+    protected abstract MathType ComputeType(MathSystem context);
 
-    public override bool TryGroup<E>(out MathExpression? result) {
+    #endregion
 
-        IEnumerable<E> eChildren = GetChildren().OfType<E>();
-        IEnumerable<MathExpression> nonEChildren = GetChildren().Except(eChildren);
+    #region Helper Methods
 
-        if(!eChildren.Any()) {
-            result = null;
-            return false;
-        }
+    public override IEnumerable<MathExpression> GetOperands() => operands;
 
-        IEnumerable<MathExpression> comparisons = eChildren.First().GetChildren();
-        List<MathExpression> group = new();
+    protected abstract bool ConditionIsMet(IEnumerable<MathExpression> operands, MathSystem context);
 
-        foreach(MathExpression comparer in comparisons) {
-
-            bool isContained = true;
-            foreach(MathExpression eChild in eChildren) {
-                if(!eChild.GetChildren().Contains(comparer)) {
-                    isContained = false;
-                    break;
-                }
-            }
-
-            if(isContained) {
-                group.Add(comparer);
-            }
-        }
-
-        if(!group.Any()) {
-            result = null;
-            return false;
-        }
-
-        IEnumerable<MathExpression> nonGroup = eChildren
-            .SelectMany(e => e.GetChildren())
-            .Except(group);
-
-        if(!nonGroup.Any()) {
-            result = null;
-            return false;
-        }
-
-        MathExpression eInstance = eChildren.First().CreateInstance(group.Concat(new MathExpression[] { CreateInstance(nonGroup) }));
-
-        if(nonEChildren.Any()) {
-            result = CreateInstance(new MathExpression[] { eInstance }.Concat(nonEChildren));
-        } else {
-            result = eInstance;
-        }
-        return true;
-
+    public override MathExpression Factorize<E>() {
+        throw new NotImplementedException();
     }
+
+    public override MathExpression Distribute<E>() {
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region Instancing
 
     protected abstract MathExpression CreateInstance(IEnumerable<MathExpression> children);
 
-    public override MathExpression Clone() => CreateInstance(children.Select(e => e.Clone()));
+    public override MathExpression Clone() => CreateInstance(operands.Select(e => e.Clone()));
+
+    #endregion
+
 }

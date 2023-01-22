@@ -12,7 +12,7 @@ public enum MathType {
 public static class UtilMathType {
 
     public static bool TryContains(this MathType type, MathExpression expression, out bool result, MathSystem? context = null) {
-        MathType expressionType = context == null ? expression.DetermineType() : context.DetermineType(expression);
+        MathType expressionType = expression.GetMathType(context);
 
         if(expressionType.IsSubTypeOf(type)) {
             result = true;

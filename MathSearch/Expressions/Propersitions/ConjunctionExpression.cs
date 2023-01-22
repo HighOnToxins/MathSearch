@@ -3,46 +3,52 @@ using MathSearch.Expression;
 
 namespace MathSearch.Expressions.Propersitions;
 
-public class ConjunctionExpression: OperatorExpression {
+public class ConjunctionExpression: UnorderedExpression {
 
     public override int Precedence => 2;
 
-    public IReadOnlyList<MathExpression> Children => children;
+    public ConjunctionExpression(params MathExpression[] operands) : base(operands) { }
 
-    public ConjunctionExpression(params MathExpression[] children) : base(children) { }
+    public ConjunctionExpression(IEnumerable<MathExpression> operands) : base(operands) { }
 
-    public ConjunctionExpression(IEnumerable<MathExpression> children) : base(children) { }
+    protected override bool ConditionIsMet(IEnumerable<MathExpression> operands, MathSystem context) =>
+        operands.All(e => MathType.Boolean.TryContains(e, out bool result, context) && result);
 
-    protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) =>
-        children.All(e => MathType.Boolean.TryContains(e, out bool result, context) && result);
-
-    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) =>
-        children
-            .OrderBy(e => e)
+    protected override bool TrySimplify(ref IEnumerable<MathExpression> operands, MathSystem context, out MathExpression? result) {
+        operands = operands
             .Where(e => e is not BooleanExpression booleanExpression || !booleanExpression.Value)
-            .SelectMany(e => e.Extract<ConjunctionExpression>());
+            .SelectMany(e => e.ExtractOperandsOf<ConjunctionExpression>());
 
-    protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
-        if(children.Count() == 1) {
-            result = children.First();
+        if(operands.Count() == 1) {
+            result = operands.First();
             return true;
-        } else if(children.All(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
+        } else if(operands.All(e => e is BooleanExpression booleanExpression && booleanExpression.Value)) {
             result = new BooleanExpression(true);
             return true;
-        } else if(children.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
+        } else if(operands.Any(e => e is BooleanExpression booleanExpression && !booleanExpression.Value)) {
             result = new BooleanExpression(false);
-            return true;
-        } else if(TryGroup<DisjunctionExpression>(out result) && result != null) {
             return true;
         }
 
-        result = null;
-        return false;
+        result = Factorize<DisjunctionExpression>().Simplify();
+        return true;
     }
 
-    protected override MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context) => MathType.Boolean;
+    protected override MathType ComputeType(MathSystem context) => MathType.Boolean;
 
-    protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new ConjunctionExpression(children);
+    public override IEnumerable<MathType> TypeOfOperands(MathType typeOfThis) {
+        if(typeOfThis.IsSubTypeOf(MathType.Boolean)) {
+            foreach(MathExpression _ in operands) {
+                yield return MathType.Boolean;
+            }
+        } else {
+            foreach(MathExpression _ in operands) {
+                yield return MathType.Universe;
+            }
+        }
+    }
 
-    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => children;
+    protected override MathExpression CreateInstance(IEnumerable<MathExpression> operands) => new ConjunctionExpression(operands);
+
+
 }

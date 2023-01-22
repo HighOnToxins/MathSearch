@@ -1,36 +1,39 @@
 ﻿
+using MathSearch.Expression;
+
 namespace MathSearch.Expressions;
 
 public abstract class AtomExpression: MathExpression {
 
+    #region Properties
+
     public override int Precedence => 0;
 
-    public override int ChildCount => 0;
+    public override int OperandCount => 0;
 
     public IConvertible Value { get; private init; }
+
+    #endregion
 
     public AtomExpression(IConvertible value) {
         Value = value;
     }
 
-    public override IEnumerable<MathExpression> GetChildren() {
-        yield break;
-    }
+    #region Helper Methods
 
-    public override MathExpression Simplify(MathSystem? context = null) {
-        if(context != null) {
-            return context.Simplify(this);
-        } else {
-            return Clone();
-        }
-    }
+    public override IEnumerable<MathType> TypeOfOperands(MathType typeOfThis) { yield break; }
 
-    public override bool TryGroup<E>(out MathExpression? result) {
-        result = null;
-        return false;
-    }
+    public override IEnumerable<MathExpression> GetOperands() { yield break; }
 
-    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) => Array.Empty<MathExpression>();
+    public override MathExpression Simplify(MathSystem? context = null) => Clone();
+
+    public override MathExpression Factorize<E>() => Clone();
+
+    public override MathExpression Distribute<E>() => Clone();
+
+    #endregion
+
+    #region Equality
 
     public override bool Equals(MathExpression? other) =>
         other is AtomExpression atomOther &&
@@ -40,6 +43,7 @@ public abstract class AtomExpression: MathExpression {
     public override int GetHashCode() =>
         GetType().Name.GetHashCode() ^ Value.GetHashCode();
 
+    #endregion
 }
 
 public abstract class AtomExpression<T>: AtomExpression where T : IConvertible {

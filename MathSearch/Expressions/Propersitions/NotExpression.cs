@@ -9,18 +9,18 @@ public class NotExpression: UnaryExpression {
     public NotExpression(MathExpression child) : base(child) {
     }
 
-    protected override bool Condition(MathExpression child, MathSystem context) =>
+    protected override bool ConditionIsMet(MathExpression child, MathSystem context) =>
         MathType.Boolean.TryContains(child, out bool result, context) && result;
 
     protected override bool TrySimplify(MathExpression child, MathSystem context, out MathExpression? result) {
 
-        //Destribute on conjunction
+        //TODO: add destribute on conjunction
 
-        //Destribute on disjunction
+        //TODO: add destribute on disjunction
 
         //remove double not
         if(child is NotExpression notExpression) {
-            result = notExpression.Child.Simplify(context);
+            result = notExpression.Operand.Simplify(context);
             return true;
         }
 
@@ -35,9 +35,16 @@ public class NotExpression: UnaryExpression {
 
     }
 
-    protected override MathType ComputeType(MathExpression child, MathSystem context) => MathType.Boolean;
+    protected override MathType ComputeType(MathSystem context) => MathType.Boolean;
 
-    protected override MathExpression CreateInstance(MathExpression child) => new NotExpression(child);
+    public override IEnumerable<MathType> TypeOfOperands(MathType typeOfThis) {
+        if(typeOfThis.IsSubTypeOf(MathType.Boolean)) {
+            yield return MathType.Boolean;
+        } else {
 
-    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) { yield break; }
+        }
+    }
+
+    protected override MathExpression CreateInstance(MathExpression operand) => new NotExpression(operand);
+
 }

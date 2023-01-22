@@ -1,6 +1,5 @@
 ﻿
 using MathSearch.Expression;
-using MathSearch.Expressions.Propersitions;
 
 namespace MathSearch.Expressions.Basics;
 
@@ -8,7 +7,7 @@ public sealed class EqualsExpression: OperatorExpression {
 
     public override int Precedence => 6;
 
-    public IReadOnlyList<MathExpression> Children => children;
+    public IReadOnlyList<MathExpression> Children => operands;
 
     public EqualsExpression(params MathExpression[] children) : base(children) { }
 
@@ -16,29 +15,32 @@ public sealed class EqualsExpression: OperatorExpression {
 
     protected override bool ConditionIsMet(IEnumerable<MathExpression> children, MathSystem context) => true;
 
-    protected override IEnumerable<MathExpression> SimplifyChildren(IEnumerable<MathExpression> children) => children.OrderBy(e => e);
-
-    protected override bool TrySimplify(IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
+    protected override bool TrySimplify(ref IEnumerable<MathExpression> children, MathSystem context, out MathExpression? result) {
 
         if(children.Count() == 1) {
             result = children.First();
             return true;
         }
 
-        //evaluate
-        if(context.TryDetermineEquality(out bool equalityResult, children)) {
-            result = new BooleanExpression(equalityResult);
-            return true;
-        }
+        //TODO: Add equality check that also uses the context.
 
         result = null;
         return false;
     }
 
-    protected override MathType DetermineType(IEnumerable<MathExpression> children, MathSystem context) => MathType.Boolean;
+    protected override MathType ComputeType(MathSystem context) {
+        throw new NotImplementedException();
+    }
+
+    public override IEnumerable<MathType> TypeOfOperands(MathType typeOfThis) {
+        foreach(MathExpression _ in operands) {
+            yield return MathType.Universe;
+        }
+    }
 
     protected override MathExpression CreateInstance(IEnumerable<MathExpression> children) => new EqualsExpression(children);
 
-    protected override IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children) { yield break; }
+
+    //TODO: add context stuff for in expression
 
 }

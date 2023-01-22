@@ -2,72 +2,77 @@
 
 namespace MathSearch.Expressions;
 
+//TODO: add ternary if operator
+//TODO: add binary-forall operator
+//TODO: add binary-exists operator
+
 public abstract class MathExpression: ICloneable, IComparable<MathExpression>, IEquatable<MathExpression> {
 
-    public abstract int ChildCount { get; }
+    #region Properties
+
+    public abstract int OperandCount { get; }
 
     public abstract int Precedence { get; }
 
-    public abstract IEnumerable<MathExpression> GetChildren();
+    #endregion
+
+    public virtual MathExpression CleanUp() => Clone();
 
     public abstract MathExpression Simplify(MathSystem? context = null);
 
-    public MathType DetermineType() => DetermineTypeBasedOn(new MathSystem());
+    public virtual MathType GetMathType(MathSystem? context = null) => MathType.Universe;
 
-    internal MathType DetermineTypeBasedOn(MathSystem context) =>
-        ComputeType(context).IntersectWith(context.GetTypeOf(this));
+    #region Helper Methods
 
-    protected abstract MathType ComputeType(MathSystem context);
+    public MathSystem GetContextFor(MathExpression child) =>
+        new(GetOperands().Except(new MathExpression[] { child })); 
+
+    public abstract IEnumerable<MathExpression> GetOperands();
+
+    public abstract IEnumerable<MathType> TypeOfOperands(MathType typeOfThis);
+
+    public bool IsSimple() {
+        if(GetMathType() != MathType.Universe) {
+            return false;
+        } else {
+            return GetOperands().All(e => e.IsSimple());
+        }
+    }
+
+    public IEnumerable<MathExpression> ExtractOperandsOf<E>() where E : MathExpression {
+        if(this is E) {
+            return GetOperands().SelectMany(c => c.ExtractOperandsOf<E>());
+        } else {
+            return new[] { Clone() };
+        }
+    }
+
+    public abstract MathExpression Factorize<E>() where E : OperatorExpression;
+
+    public abstract MathExpression Distribute<E>() where E : OperatorExpression;
+
+    #endregion
+
+    #region Clone Methods
 
     public abstract MathExpression Clone();
 
     object ICloneable.Clone() => Clone();
 
-    public bool IsSimple() {
-        if(this is INonSimpleExpression) {
-            return false;
-        } else {
-            return GetChildren().All(e => e.IsSimple());
-        }
-    }
+    #endregion
 
-    public MathSystem? GetContextForChild(int index, IEnumerable<MathExpression>? children = null, MathSystem? context = null) {
-        children ??= GetChildren();
+    #region Equality Methods
 
-        List<MathExpression> temp = AsContext(children).ToList();
-        if(index < temp.Count) temp.RemoveAt(index);
-
-        context ??= new();
-        return new MathSystem(context) { temp };
-    }
-
-    protected abstract IEnumerable<MathExpression> AsContext(IEnumerable<MathExpression> children);
-
-    public IEnumerable<MathExpression> Extract<E>() where E : MathExpression {
-        if(this is E) {
-            return GetChildren().SelectMany(c => c.Extract<E>());
-        } else {
-            return new[] { Clone() };
-        }
-    }
-
-    public IEnumerable<MathExpression> Extract() {
-        if(ChildCount > 0) {
-            return GetChildren().SelectMany(c => c.Extract());
-        } else {
-            return new[] { Clone() };
-        }
-    }
-
-    public abstract bool TryGroup<E>(out MathExpression? result) where E : OperatorExpression;
+    public override bool Equals(object? obj) =>
+        Equals(obj as MathExpression);
 
     public virtual bool Equals(MathExpression? other) {
         if(other == null || !other.GetType().IsEquivalentTo(GetType())) {
             return false;
         }
 
-        MathExpression[] children = GetChildren().ToArray();
-        MathExpression[] otherChildren = other.GetChildren().ToArray();
+        MathExpression[] children = GetOperands().ToArray();
+        MathExpression[] otherChildren = other.GetOperands().ToArray();
 
         if(children.Length != otherChildren.Length) {
             return false;
@@ -82,15 +87,11 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
         return true;
     }
 
-    public override bool Equals(object? obj) {
-        return Equals(obj as MathExpression);
-    }
-
     public override int GetHashCode() {
-        int result = GetType().GetHashCode();
+        int result = GetType().Name.GetHashCode();
 
         unchecked {
-            foreach(MathExpression child in GetChildren()) {
+            foreach(MathExpression child in GetOperands()) {
                 result ^= child.GetHashCode();
             }
         }
@@ -120,7 +121,7 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
         }
 
         //compare children
-        if(expression1.ChildCount > 0 && expression2.ChildCount > 0) {
+        if(expression1.OperandCount > 0 && expression2.OperandCount > 0) {
             return CompareChildrenOf(expression1, expression2);
         }
 
@@ -129,10 +130,10 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
 
     private static int CompareChildrenOf(MathExpression operator1, MathExpression operator2) {
 
-        MathExpression[] children1 = operator1.GetChildren().ToArray();
-        MathExpression[] children2 = operator2.GetChildren().ToArray();
+        MathExpression[] children1 = operator1.GetOperands().ToArray();
+        MathExpression[] children2 = operator2.GetOperands().ToArray();
 
-        for(int i = 0; i < operator1.ChildCount && i < operator2.ChildCount; i++) {
+        for(int i = 0; i < operator1.OperandCount && i < operator2.OperandCount; i++) {
             int result = Compare(children1[i], children2[i]);
 
             if(result != 0) {
@@ -140,6 +141,9 @@ public abstract class MathExpression: ICloneable, IComparable<MathExpression>, I
             }
         }
 
-        return operator2.ChildCount - operator1.ChildCount;
+        return operator2.OperandCount - operator1.OperandCount;
     }
+
+    #endregion
+
 }
